@@ -1,0 +1,5 @@
+rootProject.name = 'iritube-backend'
+include 'iritube-core'
+include 'iritube-server'
+include 'iritube-converter'
+
