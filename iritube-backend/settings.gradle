@@ -5,4 +5,7 @@ include 'iritube-converter'
 include 'iritube-auth'
 include 'iritube-auth:iritube-auth-firebase'
 findProject(':iritube-auth:iritube-auth-firebase')?.name = 'iritube-auth-firebase'
+include 'iritube-storage'
+include 'iritube-storage:iritube-storage-s3'
+findProject(':iritube-storage:iritube-storage-s3')?.name = 'iritube-storage-s3'
 
