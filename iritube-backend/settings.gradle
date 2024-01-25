@@ -2,4 +2,7 @@ rootProject.name = 'iritube-backend'
 include 'iritube-core'
 include 'iritube-server'
 include 'iritube-converter'
+include 'iritube-auth'
+include 'iritube-auth:iritube-auth-firebase'
+findProject(':iritube-auth:iritube-auth-firebase')?.name = 'iritube-auth-firebase'
 

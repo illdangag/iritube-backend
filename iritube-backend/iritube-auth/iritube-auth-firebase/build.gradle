@@ -19,9 +19,9 @@ repositories {
 dependencies {
     // 상위 프로젝트 의존성
     implementation project(':iritube-core')
+    implementation project(':iritube-auth')
 
     // spring 의존성
-    developmentOnly 'org.springframework.boot:spring-boot-devtools' // classpath의 파일이 변경된 경우 서버 자동 재시작 기능
     implementation 'org.springframework.boot:spring-boot-starter-web' // spring MVC를 위한 기본적인 종속, 내장 Tomcat 포함
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // spring jpa
     implementation 'org.springframework.boot:spring-boot-starter-validation' // annotation 기반의 데이터 검증 자동화
@@ -30,21 +30,16 @@ dependencies {
     // 프로젝트 의존성
     compileOnly 'org.projectlombok:lombok' // lombok
     annotationProcessor 'org.projectlombok:lombok' // lombok
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.1.0' // mariadb 접속
+    implementation 'com.google.firebase:firebase-admin:9.1.1' // firebase
+}
 
-    // 프로젝트 테스트 의존성
-    testImplementation('org.springframework.boot:spring-boot-starter-test') { // spring 테스트
-        exclude group: 'junit', module: 'junit' // junit 특정 버전을 사용하기 위해서 기본 junit을 포함하지 않도록 함
-    }
-    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1" // junit
-    testCompileOnly 'org.projectlombok:lombok' // lombok
-    testAnnotationProcessor 'org.projectlombok:lombok' // lombok
-    testImplementation 'com.h2database:h2:2.2.220' // 테스트 환경에서 사용 할 데이터베이스
+test {
+    useJUnitPlatform()
 }
 
 checkstyle { // code convention
     ignoreFailures = true
-    configFile = file("../checkstyle.xml")
+    configFile = file("../../checkstyle.xml")
     reportsDir = file("${buildDir}/checkstyle-output")
 }
 
@@ -52,4 +47,12 @@ test {
     dependsOn checkstyleMain, checkstyleTest
 
     useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 }

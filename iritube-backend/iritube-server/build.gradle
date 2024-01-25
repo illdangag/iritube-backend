@@ -19,6 +19,7 @@ repositories {
 dependencies {
     // 상위 프로젝트 의존성
     implementation project(':iritube-core')
+    implementation project(':iritube-auth:iritube-auth-firebase')
 
     // spring 의존성
     developmentOnly 'org.springframework.boot:spring-boot-devtools' // classpath의 파일이 변경된 경우 서버 자동 재시작 기능
@@ -39,7 +40,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.1" // junit
     testCompileOnly 'org.projectlombok:lombok' // lombok
     testAnnotationProcessor 'org.projectlombok:lombok' // lombok
-    testImplementation 'com.h2database:h2:2.1.214' // 테스트 환경에서 사용 할 데이터베이스
+    testImplementation 'com.h2database:h2:2.2.220' // 테스트 환경에서 사용 할 데이터베이스
 }
 
 checkstyle { // code convention
