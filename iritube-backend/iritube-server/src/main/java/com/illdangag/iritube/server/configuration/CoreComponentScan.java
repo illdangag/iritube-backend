@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@ComponentScan(basePackages = {"com.illdangag.iritube.core"})
+@ComponentScan(basePackages = {"com.illdangag.iritube"})
 @EntityScan(basePackages = {"com.illdangag.iritube.core"})
 @EnableJpaRepositories(basePackages = {"com.illdangag.iritube.core"})
 public class CoreComponentScan {
