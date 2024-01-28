@@ -12,15 +12,15 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.illdangag.iritube.core.data.IritubeFileInputStream;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
-import com.illdangag.iritube.core.util.DateTimeUtils;
 import com.illdangag.iritube.storage.StorageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.Calendar;
 
+@Slf4j
 @Service
 public class S3StorageServiceImpl implements StorageService {
     private final String ENDPOINT;
@@ -87,11 +87,5 @@ public class S3StorageServiceImpl implements StorageService {
         }
 
         return awsClientBuilder.build();
-    }
-
-    @Override
-    public String getPath(FileMetadata fileMetadata) {
-        Calendar createDate = DateTimeUtils.getCalendar(fileMetadata.getCreateDate());
-        return String.format("%04d-%02d-%02d/%d", createDate.get(Calendar.YEAR), createDate.get(Calendar.MONTH) + 1, createDate.get(Calendar.DATE), fileMetadata.getId());
     }
 }

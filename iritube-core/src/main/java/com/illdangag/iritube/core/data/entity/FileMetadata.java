@@ -38,7 +38,7 @@ public class FileMetadata {
     @Size(max = 50)
     private String originName;
 
-    private UUID fileName;
+    private UUID fileId;
 
     private Long size;
 }

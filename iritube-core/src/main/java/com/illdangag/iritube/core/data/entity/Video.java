@@ -1,9 +1,8 @@
 package com.illdangag.iritube.core.data.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.illdangag.iritube.core.data.entity.type.VideoState;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
@@ -22,8 +21,16 @@ public class Video {
     private Long id;
 
     @Builder.Default
+    @Size(max = 100)
     private String title = "";
 
     @Builder.Default
+    @Size(max = 1000)
+    private String description = "";
+
+    @Builder.Default
     private Long duration = 0L;
+
+    @Enumerated(EnumType.STRING)
+    private VideoState state;
 }

@@ -1,6 +1,7 @@
-package com.illdangag.iritube.core.repository;
+package com.illdangag.iritube.core.repository.implement;
 
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.core.repository.AccountRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
