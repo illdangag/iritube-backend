@@ -2,6 +2,7 @@ package com.illdangag.iritube.core.data.entity;
 
 import com.illdangag.iritube.core.data.entity.type.AccountAuth;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.envers.Audited;
@@ -22,13 +23,15 @@ import java.time.LocalDateTime;
 public class Account {
     @Id
     @GeneratedValue
-    private Long id;
+    @Builder.Default
+    private Long id = null;
 
     @Builder.Default
     @CreationTimestamp
     private LocalDateTime createDate = LocalDateTime.now();
 
     @Builder.Default
+    @Size(max = 100)
     private String nickname = "";
 
     @Builder.Default

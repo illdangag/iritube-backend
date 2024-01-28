@@ -10,7 +10,11 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum IritubeCoreError implements IritubeError {
-    INVALID_REQUEST("00000001", 400, "Invalid request.");
+    // 요청 오류
+    INVALID_REQUEST("00000001", 400, "Invalid request."),
+
+    // 인증 오류
+    INVALID_AUTHORIZATION("01000000", 401, "Invalid authorization.");
 
     private final String code;
     private final int httpStatusCode;

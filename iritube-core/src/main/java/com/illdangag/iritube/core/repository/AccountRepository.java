@@ -1,4 +1,4 @@
-package com.illdangag.iritube.server.repository;
+package com.illdangag.iritube.core.repository;
 
 import com.illdangag.iritube.core.data.entity.Account;
 

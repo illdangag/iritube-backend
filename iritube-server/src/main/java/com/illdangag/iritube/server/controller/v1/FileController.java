@@ -1,5 +1,9 @@
 package com.illdangag.iritube.server.controller.v1;
 
+import com.illdangag.iritube.core.annotation.IritubeAuthorization;
+import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
+import com.illdangag.iritube.core.annotation.RequestContext;
+import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.storage.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +31,10 @@ public class FileController {
         this.storageService = storageService;
     }
 
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.POST, path = "/file")
-    public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file,
+                                             @RequestContext Account account) {
         log.info("name: {}", file.getName());
 
         InputStream inputStream;
@@ -40,6 +46,7 @@ public class FileController {
 
         FileMetadata fileMetadata = FileMetadata.builder()
                 .id(Calendar.getInstance().getTimeInMillis())
+                .account(account)
                 .build();
 
         this.storageService.uploadFile(fileMetadata, inputStream);
