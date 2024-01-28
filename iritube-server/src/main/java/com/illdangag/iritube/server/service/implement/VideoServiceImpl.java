@@ -5,11 +5,13 @@ import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.FileType;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
+import com.illdangag.iritube.core.data.message.VideoEncode;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.AccountRepository;
 import com.illdangag.iritube.core.repository.FileMetadataRepository;
 import com.illdangag.iritube.core.repository.VideoRepository;
+import com.illdangag.iritube.message.service.MessageQueueService;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
 import com.illdangag.iritube.server.data.response.VideoInfo;
 import com.illdangag.iritube.server.service.VideoService;
@@ -28,14 +30,17 @@ public class VideoServiceImpl implements VideoService {
     private final VideoRepository videoRepository;
 
     private final StorageService storageService;
+    private final MessageQueueService messageQueueService;
 
     @Autowired
     public VideoServiceImpl(AccountRepository accountRepository, FileMetadataRepository fileMetadataRepository,
-                            VideoRepository videoRepository, StorageService storageService) {
+                            VideoRepository videoRepository, StorageService storageService,
+                            MessageQueueService messageQueueService) {
         this.accountRepository = accountRepository;
         this.fileMetadataRepository = fileMetadataRepository;
         this.videoRepository = videoRepository;
         this.storageService = storageService;
+        this.messageQueueService = messageQueueService;
     }
 
     @Override
@@ -68,8 +73,14 @@ public class VideoServiceImpl implements VideoService {
                 .title(videoInfoCreate.getTitle())
                 .description(videoInfoCreate.getDescription())
                 .state(VideoState.UPLOADED)
+                .rawVideoFile(fileMetadata)
                 .build();
         this.videoRepository.save(video);
+
+        VideoEncode videoEncode = VideoEncode.builder()
+                .videoId(String.valueOf(video.getId()))
+                .build();
+        this.messageQueueService.sendMessage(videoEncode);
 
         return new VideoInfo(video);
     }

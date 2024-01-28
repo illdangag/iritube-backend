@@ -33,4 +33,8 @@ public class Video {
 
     @Enumerated(EnumType.STRING)
     private VideoState state;
+
+    @OneToOne
+    @JoinColumn(name = "file_metadata_id")
+    private FileMetadata rawVideoFile;
 }
