@@ -40,6 +40,12 @@ public class S3StorageServiceImpl implements StorageService {
         this.ACCESS_KEY = accessKey;
         this.SECRET_KEY = secretKey;
         this.BUCKET = bucket;
+
+        log.info("S3 endpoint: {}", this.ENDPOINT);
+        log.info("S3 regions: {}", this.REGIONS);
+        log.info("S3 access key: {}", this.ACCESS_KEY);
+        log.info("S3 secret key: {}", this.SECRET_KEY);
+        log.info("S3 bucket: {}", this.BUCKET);
     }
 
     @Override
@@ -67,8 +73,7 @@ public class S3StorageServiceImpl implements StorageService {
 
     @Override
     public IritubeFileInputStream downloadFile(String fileMetadataId) {
-        // TODO
-        return null;
+        return null; // TODO
     }
 
     private AmazonS3 getAmazonS3() {
