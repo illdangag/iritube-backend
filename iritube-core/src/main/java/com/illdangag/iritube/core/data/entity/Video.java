@@ -36,5 +36,5 @@ public class Video {
 
     @OneToOne
     @JoinColumn(name = "file_metadata_id")
-    private FileMetadata rawVideoFile;
+    private FileMetadata rawVideo;
 }

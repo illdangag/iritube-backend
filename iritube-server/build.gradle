@@ -22,8 +22,8 @@ dependencies {
     implementation project(':iritube-auth:iritube-auth-firebase')
     implementation project(':iritube-storage')
     implementation project(':iritube-storage:iritube-storage-s3')
-    implementation project(':iritube-message-queue')
-    implementation project(':iritube-message-queue:iritube-kafka')
+    implementation project(':iritube-server:iritube-mq')
+    implementation project(':iritube-server:iritube-mq:iritube-kafka')
 
     // spring 의존성
     developmentOnly 'org.springframework.boot:spring-boot-devtools' // classpath의 파일이 변경된 경우 서버 자동 재시작 기능

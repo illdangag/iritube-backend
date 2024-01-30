@@ -11,9 +11,9 @@ import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.AccountRepository;
 import com.illdangag.iritube.core.repository.FileMetadataRepository;
 import com.illdangag.iritube.core.repository.VideoRepository;
-import com.illdangag.iritube.message.service.MessageQueueService;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
 import com.illdangag.iritube.server.data.response.VideoInfo;
+import com.illdangag.iritube.server.message.service.MessageQueueService;
 import com.illdangag.iritube.server.service.VideoService;
 import com.illdangag.iritube.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public class VideoServiceImpl implements VideoService {
                 .title(videoInfoCreate.getTitle())
                 .description(videoInfoCreate.getDescription())
                 .state(VideoState.UPLOADED)
-                .rawVideoFile(fileMetadata)
+                .rawVideo(fileMetadata)
                 .build();
         this.videoRepository.save(video);
 

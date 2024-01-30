@@ -10,8 +10,7 @@ import java.util.stream.Collectors;
 
 public enum FileType {
     RAW_VIDEO,
-    ENCODED_VIDEO,
-    CHUNKED_VIDEO;
+    THUMBNAIL;
 
     @JsonCreator
     public static FileType setValue(String key) {
