@@ -17,8 +17,8 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.illdangag.iritube.core.data.IritubeFileInputStream;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
-import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.storage.StorageService;
+import com.illdangag.iritube.storage.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,35 +96,19 @@ public class S3StorageServiceImpl implements StorageService {
         AmazonS3 amazonS3 = this.getAmazonS3();
 
         String hlsPath = this.getHLSPath(video);
-
         String baseHlsDirectoryPath = hlsDirectory.getAbsolutePath();
 
-        File[] files = hlsDirectory.listFiles((file) -> {
-           return !file.isDirectory();
-        });
-        File[] directories = hlsDirectory.listFiles((file) -> {
-            return file.isDirectory();
-        });
+        FileUtils.scanFile(hlsDirectory, (file -> {
+            String fileAbsoluteFile = file.getAbsolutePath();
+            String postFix = fileAbsoluteFile.substring(baseHlsDirectoryPath.length() + 1);
+            String key = hlsPath + "/" + postFix;
 
-//        while (true) {
-//            for (File file : files) {
-//                String key = hlsPath + "/" + file.getAbsolutePath().substring(baseHlsDirectoryPath.length());
-//                InputStream inputStream =
-//                try {
-//
-//                }
-//                InputStream inputStream = new FileInputStream(file);
-//                this.uploadFile(amazonS3, key, );
-//            }
-//        }
-
-        if (!hlsDirectory.isDirectory()) {
-            throw new RuntimeException(); // TODO
-        }
-
-
+            try {
+                FileInputStream fileInputStream = new FileInputStream(file);
+                this.uploadFile(amazonS3, key, fileInputStream);
+            } catch (Exception exception) {}
+        }));
     }
-
 
     private void uploadFile(AmazonS3 amazonS3, String key, InputStream inputStream) throws IOException, SdkClientException, AmazonServiceException {
         long contentLength = (long) inputStream.available();

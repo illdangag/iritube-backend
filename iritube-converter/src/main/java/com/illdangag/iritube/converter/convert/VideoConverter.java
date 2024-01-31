@@ -10,12 +10,14 @@ import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import net.bramp.ffmpeg.probe.FFmpegStream;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -46,14 +48,22 @@ public class VideoConverter {
             throw new IritubeConvertException(IritubeConverterError.FAIL_TO_READ_VIDEO_METADATA, exception);
         }
 
+        Optional<FFmpegStream> videoStreamOptional = probeResult.getStreams()
+                .stream()
+                .filter(item -> item.codec_type == FFmpegStream.CodecType.VIDEO)
+                .findAny();
+        FFmpegStream videoStream = videoStreamOptional.get();
+        int width = videoStream.width;
+        int height = videoStream.height;
+
         return VideoMetadata.builder()
-                .width(probeResult.getStreams().get(0).width)
-                .height(probeResult.getStreams().get(0).height)
+                .width(width)
+                .height(height)
                 .duration(probeResult.getFormat().duration)
                 .build();
     }
 
-    public File createHSL() throws IritubeConvertException {
+    public File createHls() throws IritubeConvertException {
         this.videoHLSDirectory = this.createVideoHLSDirectory();
         VideoMetadata videoMetadata = this.getVideoMetadata();
         int width = videoMetadata.getWidth();
@@ -177,7 +187,10 @@ public class VideoConverter {
 
             if (this.videoHLSDirectory != null) {
                 FileUtils.cleanDirectory(this.videoHLSDirectory);
-                log.info("delete temp video hls file. directory: {}", this.videoFile.getAbsolutePath());
+                isDelete = Files.deleteIfExists(this.videoHLSDirectory.toPath());
+                if (isDelete) {
+                    log.info("delete temp video hls file. directory: {}", this.videoFile.getAbsolutePath());
+                }
             }
 
         } catch (Exception exception) {

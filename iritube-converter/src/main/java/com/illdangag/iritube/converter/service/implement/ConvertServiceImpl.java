@@ -8,6 +8,7 @@ import com.illdangag.iritube.converter.message.service.MessageQueueService;
 import com.illdangag.iritube.converter.service.ConvertService;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
+import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.storage.StorageService;
@@ -72,9 +73,14 @@ public class ConvertServiceImpl implements ConvertService {
 
         VideoConverter videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
         VideoMetadata videoMetadata = videoConverter.getVideoMetadata();
-        File hslDirectory = videoConverter.createHSL();
 
+        video.setState(VideoState.ENCODING);
         video.setDuration(videoMetadata.getDuration());
+        this.videoRepository.save(video);
+
+        File hlsDirectory = videoConverter.createHls();
+        this.storageService.uploadHLSDirectory(video, hlsDirectory);
+        video.setState(VideoState.ENABLED);
         this.videoRepository.save(video);
 
         videoConverter.clear();

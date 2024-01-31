@@ -7,7 +7,10 @@ import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import net.bramp.ffmpeg.probe.FFmpegStream;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 @Slf4j
 public class FfmpegTestMain {
@@ -78,8 +81,13 @@ public class FfmpegTestMain {
         FFmpeg ffmpeg = new FFmpeg(FFMPEG_PATH);
         FFmpegProbeResult probeResult = ffprobe.probe(VIDEO_PATH);
 
-        int width = probeResult.getStreams().get(0).width;
-        int height = probeResult.getStreams().get(0).height;
+        Optional<FFmpegStream> videoStreamOptional = probeResult.getStreams()
+                .stream()
+                .filter(item -> item.codec_type == FFmpegStream.CodecType.VIDEO)
+                .findAny();
+        FFmpegStream videoStream = videoStreamOptional.get();
+        int width = videoStream.width;
+        int height = videoStream.height;
 
         String videoFileName = "sample_video_00";
 
