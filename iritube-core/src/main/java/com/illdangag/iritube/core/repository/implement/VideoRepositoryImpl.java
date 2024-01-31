@@ -25,8 +25,12 @@ public class VideoRepositoryImpl implements VideoRepository {
         TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
                 .setParameter("id", id);
 
-        Video video = query.getSingleResult();
-        return Optional.ofNullable(video);
+        try {
+            Video video = query.getSingleResult();
+            return Optional.ofNullable(video);
+        } catch (Exception exception) {
+            return Optional.empty();
+        }
     }
 
     @Override

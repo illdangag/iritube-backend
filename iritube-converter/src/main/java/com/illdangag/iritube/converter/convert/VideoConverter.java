@@ -1,6 +1,8 @@
 package com.illdangag.iritube.converter.convert;
 
 import com.illdangag.iritube.converter.data.VideoMetadata;
+import com.illdangag.iritube.converter.exception.IritubeConvertException;
+import com.illdangag.iritube.converter.exception.IritubeConverterError;
 import lombok.extern.slf4j.Slf4j;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFprobe;
@@ -28,10 +30,16 @@ public class VideoConverter {
         this.videoFileInputStream = videoFileInputStream;
     }
 
-    public VideoMetadata getVideoMetadata() throws IOException {
+    public VideoMetadata getVideoMetadata() throws IritubeConvertException {
         File videoFile = this.getVideoFile();
 
-        FFmpegProbeResult probeResult = this.ffprobe.probe(videoFile.getAbsolutePath());
+        FFmpegProbeResult probeResult;
+
+        try {
+            probeResult = this.ffprobe.probe(videoFile.getAbsolutePath());
+        } catch (Exception exception) {
+            throw new IritubeConvertException(IritubeConverterError.FAIL_TO_READ_VIDEO_METADATA, exception);
+        }
 
         return VideoMetadata.builder()
                 .width(probeResult.getStreams().get(0).width)
@@ -40,7 +48,7 @@ public class VideoConverter {
                 .build();
     }
 
-    private File getVideoFile() {
+    private File getVideoFile() throws IritubeConvertException {
         if (this.videoFile != null) {
             return videoFile;
         }
@@ -49,33 +57,26 @@ public class VideoConverter {
             this.videoFile = File.createTempFile("iritube_", "_video", new File(this.tempDirectory));
             this.videoFile.deleteOnExit();
         } catch (Exception exception) {
-            log.error("fail to create video temp directory.", exception);
-            throw new RuntimeException(exception); // TODO
+            throw new IritubeConvertException(IritubeConverterError.FAIL_TO_CREATE_VIDEO_TEMP_FILE, exception);
         }
 
         try {
             FileUtils.copyInputStreamToFile(this.videoFileInputStream, videoFile);
         } catch (Exception exception) {
-            log.error("fail to create video file.", exception);
-            throw new RuntimeException(exception); // TODO
+            throw new IritubeConvertException(IritubeConverterError.FAIL_TO_COPY_VIDEO_TEMP_FILE, exception);
         }
 
         return this.videoFile;
     }
 
-    public void clear() {
+    public void clear() throws IritubeConvertException {
         try {
             boolean isDelete = Files.deleteIfExists(this.videoFile.toPath());
             if (isDelete) {
                 log.info("delete temp video file. file: {}", this.videoFile.getAbsolutePath());
             }
         } catch (Exception exception) {
-            // TODO
+            throw new IritubeConvertException(IritubeConverterError.FAIL_TO_DELETE_VIDEO_TEMP_FILE, exception);
         }
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        this.clear();
     }
 }

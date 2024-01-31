@@ -2,6 +2,8 @@ package com.illdangag.iritube.converter.service.implement;
 
 import com.illdangag.iritube.converter.convert.VideoConverter;
 import com.illdangag.iritube.converter.data.VideoMetadata;
+import com.illdangag.iritube.converter.exception.IritubeConvertException;
+import com.illdangag.iritube.converter.exception.IritubeConverterError;
 import com.illdangag.iritube.converter.message.service.MessageQueueService;
 import com.illdangag.iritube.converter.service.ConvertService;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
@@ -14,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
@@ -48,36 +50,27 @@ public class ConvertServiceImpl implements ConvertService {
         this.storageService = storageService;
 
         this.messageQueueService.addVideoEncodeEventListener((videoEncodeEvent) -> {
-            log.info("process: {}", videoEncodeEvent.toString());
-            this.test(videoEncodeEvent);
+            try {
+                this.encodeHLS(videoEncodeEvent);
+            } catch (Exception exception) {
+                log.error("Error encode HLS.", exception);
+            }
         });
     }
 
-    private void test(VideoEncodeEvent videoEncodeEvent) {
+    private void encodeHLS(VideoEncodeEvent videoEncodeEvent) throws IritubeConvertException, IOException {
         String videoId = videoEncodeEvent.getVideoId();
+
         Optional<Video> videoOptional = this.videoRepository.getVideo(Long.parseLong(videoId));
-        log.info("video: {}", videoOptional.isPresent());
         Video video = videoOptional.orElseThrow(() -> {
-            return new RuntimeException(); // TODO
+            return new IritubeConvertException(IritubeConverterError.NOT_EXIST_VIDEO, "video: " + videoId);
         });
+
         FileMetadata rawVideoFileMetadata = video.getRawVideo();
         InputStream rawVideoFileInputStream = this.storageService.downloadFile(rawVideoFileMetadata);
 
-        VideoConverter videoConverter;
-        try {
-            videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
-        } catch (Exception exception) {
-            throw new RuntimeException(exception); // TODO
-        }
-
-        VideoMetadata videoMetadata;
-        try {
-            videoMetadata = videoConverter.getVideoMetadata();
-        } catch (Exception exception) {
-            throw new RuntimeException(exception); // TODO
-        }
-
-        log.info("width: {}, hegith: {}, duration: {}", videoMetadata.getWidth(), videoMetadata.getHeight(), videoMetadata.getDuration());
+        VideoConverter videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
+        VideoMetadata videoMetadata = videoConverter.getVideoMetadata();
 
         video.setDuration(videoMetadata.getDuration());
         this.videoRepository.save(video);
