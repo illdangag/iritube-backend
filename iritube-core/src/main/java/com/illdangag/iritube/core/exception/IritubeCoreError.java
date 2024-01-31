@@ -20,7 +20,10 @@ public enum IritubeCoreError implements IritubeError {
     NOT_EXIST_ACCOUNT("02000000", 404, "Not exist account."),
 
     // 영상 오류
-    INVALID_VIDEO_FILE("03000000", 400, "Invalid video file.");
+    INVALID_VIDEO_FILE("03000000", 400, "Invalid video file."),
+    NOT_EXIST_VIDEO("03000000", 404, "Not exist video."),
+    NOT_EXIST_HLS_VIDEO("03000001", 404, "Not exist video."),
+    ;
 
     private final String code;
     private final int httpStatusCode;

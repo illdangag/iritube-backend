@@ -85,6 +85,51 @@ public class VideoServiceImpl implements VideoService {
         return new VideoInfo(video);
     }
 
+    @Override
+    public InputStream getVideoHlsMaster(String videoId) {
+        Video video = this.getVideo(videoId);
+        if (video.getState() != VideoState.ENABLED) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+        }
+
+        return this.storageService.downloadVideoHlsMaster(video);
+    }
+
+    @Override
+    public InputStream getVideoPlaylist(String videoId, int quality) {
+        Video video = this.getVideo(videoId);
+        if (video.getState() != VideoState.ENABLED) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+        }
+
+        return this.storageService.downloadVideoPlaylist(video, quality);
+    }
+
+    @Override
+    public InputStream getVideo(String videoId, int quality, String videoFile) {
+        Video video = this.getVideo(videoId);
+        if (video.getState() != VideoState.ENABLED) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+        }
+
+        return this.storageService.downloadVideo(video, quality, videoFile);
+    }
+
+    private Video getVideo(String videoId) {
+        long id = -1;
+
+        try {
+            id = Long.parseLong(videoId);
+        } catch (Exception exception) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+        }
+
+        Optional<Video> videoOptional = this.videoRepository.getVideo(id);
+        return videoOptional.orElseThrow(() -> {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+        });
+    }
+
     private Account getAccount(String accountId) {
         long id = -1;
 

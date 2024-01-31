@@ -73,16 +73,17 @@ public class FirebaseAuthInterceptor implements HandlerInterceptor {
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
 
-        Optional<FirebaseToken> firebaseTokenOptional = this.getFirebaseToken(request);
-
         IritubeAuthorizationType[] authorizationTypes = iritubeAuthorization.type();
         List<IritubeAuthorizationType> authorizationTypeList = authorizationTypes == null ? Collections.emptyList()
                 : Arrays.asList(authorizationTypes);
 
-        // 권한이 필요한 기능에 권한 정보 없이 요청한 경우
-        if (!authorizationTypeList.isEmpty()
-                && !authorizationTypeList.contains(IritubeAuthorizationType.NONE)
-                && firebaseTokenOptional.isEmpty()) {
+        if (authorizationTypeList.isEmpty()
+                || authorizationTypeList.contains(IritubeAuthorizationType.NONE)) {
+            return HandlerInterceptor.super.preHandle(request, response, handler);
+        }
+
+        Optional<FirebaseToken> firebaseTokenOptional = this.getFirebaseToken(request);
+        if (firebaseTokenOptional.isEmpty()) {
             throw new IritubeException(IritubeFirebaseError.NOT_EXIST_FIREBASE_ID_TOKEN);
         }
 

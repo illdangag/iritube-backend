@@ -10,4 +10,10 @@ public interface VideoService {
     VideoInfo uploadVideo(String accountId, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
 
     VideoInfo uploadVideo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
+
+    InputStream getVideoHlsMaster(String videoId);
+
+    InputStream getVideoPlaylist(String videoId, int quality);
+
+    InputStream getVideo(String videoId, int quality, String videoFile);
 }

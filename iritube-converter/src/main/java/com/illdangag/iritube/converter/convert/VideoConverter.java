@@ -3,6 +3,7 @@ package com.illdangag.iritube.converter.convert;
 import com.illdangag.iritube.converter.data.VideoMetadata;
 import com.illdangag.iritube.converter.exception.IritubeConvertException;
 import com.illdangag.iritube.converter.exception.IritubeConverterError;
+import com.illdangag.iritube.core.data.Const;
 import lombok.extern.slf4j.Slf4j;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
@@ -72,30 +73,34 @@ public class VideoConverter {
         FFmpegOutputBuilder outputBuilder = new FFmpegBuilder()
                 .setInput(this.getVideoFile().getAbsolutePath())
                 .addExtraArgs("-y")
-                .addOutput(this.videoHLSDirectory.getAbsolutePath() + File.separator + "%v" + File.separator + "playlist.m3u8") // 출력 위치
+                .addOutput(this.videoHLSDirectory.getAbsolutePath() + File.separator + "%v" + File.separator + Const.HLS_PLAY_LIST_FILE)
                 .setFormat("hls")
                 .addExtraArgs("-hls_time", "5") // chunk 시간
                 .addExtraArgs("-hls_list_size", "0")
-                .addExtraArgs("-hls_segment_filename", this.videoHLSDirectory.getAbsolutePath() + File.separator + "%v" + File.separator + "video_%04d.ts") // ts 파일 이름 (ex: output_0000.ts)
-                .addExtraArgs("-master_pl_name",  "video.m3u8"); // 마스터 재생 파일
+                .addExtraArgs("-hls_segment_filename", this.videoHLSDirectory.getAbsolutePath() + File.separator + "%v" + File.separator + "video_%04d.ts")
+                .addExtraArgs("-master_pl_name", Const.HLS_MASTER_FILE);
 
         if (height >= 1080) {
-            outputBuilder.addExtraArgs("-map", "0:v")
+            outputBuilder
+                    .addExtraArgs("-map", "0:v")
                     .addExtraArgs("-map", "0:v")
                     .addExtraArgs("-map", "0:v")
                     .addExtraArgs("-var_stream_map", "v:0,name:1080 v:1,name:720 v:2,name:480")
+
                     .addExtraArgs("-b:v:0", "5000k") // 1080P
                     .addExtraArgs("-maxrate:v:0", "5000k")
                     .addExtraArgs("-bufsize:v:0", "10000k")
                     .addExtraArgs("-s:v:0", getWidth(width, height, 1080) + "x1080")
                     .addExtraArgs("-crf:v:0", "15")
                     .addExtraArgs("-b:a:0", "128k")
+
                     .addExtraArgs("-b:v:1", "2500k") // 720P
                     .addExtraArgs("-maxrate:v:1", "2500k")
                     .addExtraArgs("-bufsize:v:1", "5000k")
                     .addExtraArgs("-s:v:1", getWidth(width, height, 720) + "x720")
                     .addExtraArgs("-crf:v:1", "22")
                     .addExtraArgs("-b:a:1", "96k")
+
                     .addExtraArgs("-b:v:2", "1000k") // 480P
                     .addExtraArgs("-maxrate:v:2", "1000k")
                     .addExtraArgs("-bufsize:v:2", "2000k")
@@ -103,15 +108,18 @@ public class VideoConverter {
                     .addExtraArgs("-crf:v:2", "28")
                     .addExtraArgs("-b:a:2", "64k");
         } else if (height >= 720) {
-            outputBuilder.addExtraArgs("-map", "0:v")
+            outputBuilder
+                    .addExtraArgs("-map", "0:v")
                     .addExtraArgs("-map", "0:v")
                     .addExtraArgs("-var_stream_map", "v:0,name:720 v:1,name:480")
+
                     .addExtraArgs("-b:v:0", "2500k") // 720P
                     .addExtraArgs("-maxrate:v:0", "2500k")
                     .addExtraArgs("-bufsize:v:0", "5000k")
                     .addExtraArgs("-s:v:0", getWidth(width, height, 720) + "x720")
                     .addExtraArgs("-crf:v:0", "22")
                     .addExtraArgs("-b:a:0", "96k")
+
                     .addExtraArgs("-b:v:1", "1000k") // 480P
                     .addExtraArgs("-maxrate:v:1", "1000k")
                     .addExtraArgs("-bufsize:v:1", "2000k")
@@ -119,8 +127,10 @@ public class VideoConverter {
                     .addExtraArgs("-crf:v:1", "28")
                     .addExtraArgs("-b:a:1", "64k");
         } else {
-            outputBuilder.addExtraArgs("-map", "0:v")
+            outputBuilder
+                    .addExtraArgs("-map", "0:v")
                     .addExtraArgs("-var_stream_map", "v:0,name:480")
+
                     .addExtraArgs("-b:v:0", "1000k") // 480P
                     .addExtraArgs("-maxrate:v:0", "1000k")
                     .addExtraArgs("-bufsize:v:0", "2000k")

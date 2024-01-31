@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.illdangag.iritube.core.data.Const;
 import com.illdangag.iritube.core.data.IritubeFileInputStream;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
@@ -71,19 +72,10 @@ public class S3StorageServiceImpl implements StorageService {
 
     @Override
     public IritubeFileInputStream downloadRawVideo(FileMetadata fileMetadata) {
+        AmazonS3 amazonS3 = this.getAmazonS3();
         String key = this.getPath(fileMetadata);
 
-        AmazonS3 amazonS3 = this.getAmazonS3();
-
-        GetObjectRequest getObjectRequest = new GetObjectRequest(this.BUCKET, key);
-        S3Object s3Object;
-
-        try {
-            s3Object = amazonS3.getObject(getObjectRequest);
-        } catch (Exception exception) {
-            throw new RuntimeException(exception); // TODO
-        }
-        InputStream inputStream = s3Object.getObjectContent();
+        InputStream inputStream = this.downloadFile(amazonS3, key);
 
         return IritubeFileInputStream.builder()
                 .inputStream(inputStream)
@@ -110,12 +102,42 @@ public class S3StorageServiceImpl implements StorageService {
         }));
     }
 
+    @Override
+    public InputStream downloadVideoHlsMaster(Video video) {
+        AmazonS3 amazonS3 = this.getAmazonS3();
+
+        String hlsPath = this.getHLSPath(video);
+        return this.downloadFile(amazonS3, hlsPath + "/" + Const.HLS_MASTER_FILE);
+    }
+
+    @Override
+    public InputStream downloadVideoPlaylist(Video video, int quality) {
+        AmazonS3 amazonS3 = this.getAmazonS3();
+
+        String hlsPath = this.getHLSPath(video);
+        return this.downloadFile(amazonS3, hlsPath + "/" + quality + "/" + Const.HLS_PLAY_LIST_FILE);
+    }
+
+    @Override
+    public InputStream downloadVideo(Video video, int quality, String videoFile) {
+        AmazonS3 amazonS3 = this.getAmazonS3();
+
+        String hlsPath = this.getHLSPath(video);
+        return this.downloadFile(amazonS3, hlsPath + "/" + quality + "/" + videoFile);
+    }
+
     private void uploadFile(AmazonS3 amazonS3, String key, InputStream inputStream) throws IOException, SdkClientException, AmazonServiceException {
         long contentLength = (long) inputStream.available();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(contentLength);
         PutObjectRequest putObjectRequest = new PutObjectRequest(this.BUCKET, key, inputStream, metadata);
         amazonS3.putObject(putObjectRequest);
+    }
+
+    private InputStream downloadFile(AmazonS3 amazonS3, String key) throws SdkClientException, AmazonServiceException {
+        GetObjectRequest getObjectRequest = new GetObjectRequest(this.BUCKET, key);
+        S3Object s3Object = amazonS3.getObject(getObjectRequest);
+        return s3Object.getObjectContent();
     }
 
     private AmazonS3 getAmazonS3() {

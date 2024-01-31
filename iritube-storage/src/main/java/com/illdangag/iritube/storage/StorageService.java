@@ -17,6 +17,12 @@ public interface StorageService {
 
     void uploadHLSDirectory(Video video, File hlsDirectory);
 
+    InputStream downloadVideoHlsMaster(Video video);
+
+    InputStream downloadVideoPlaylist(Video video, int quality);
+
+    InputStream downloadVideo(Video video, int quality, String videoFile);
+
     default String getFileExtension(String filePathName) {
         return FilenameUtils.getExtension(filePathName);
     }
