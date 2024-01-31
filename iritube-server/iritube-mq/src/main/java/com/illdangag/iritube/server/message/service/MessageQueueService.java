@@ -1,7 +1,7 @@
 package com.illdangag.iritube.server.message.service;
 
-import com.illdangag.iritube.core.data.message.VideoEncode;
+import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 
 public interface MessageQueueService {
-    void sendMessage(VideoEncode videoEncode);
+    void sendMessage(VideoEncodeEvent videoEncodeEvent);
 }

@@ -8,8 +8,10 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.illdangag.iritube.core.data.IritubeFileInputStream;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.storage.StorageService;
@@ -72,8 +74,25 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public IritubeFileInputStream downloadFile(String fileMetadataId) {
-        return null; // TODO
+    public IritubeFileInputStream downloadFile(FileMetadata fileMetadata) {
+        String key = this.getPath(fileMetadata);
+
+        AmazonS3 amazonS3 = this.getAmazonS3();
+
+        GetObjectRequest getObjectRequest = new GetObjectRequest(this.BUCKET, key);
+        S3Object s3Object;
+
+        try {
+            s3Object = amazonS3.getObject(getObjectRequest);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception); // TODO
+        }
+        InputStream inputStream = s3Object.getObjectContent();
+
+        return IritubeFileInputStream.builder()
+                .inputStream(inputStream)
+                .fileMetadata(fileMetadata)
+                .build();
     }
 
     private AmazonS3 getAmazonS3() {

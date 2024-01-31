@@ -12,7 +12,7 @@ public class VideoInfo {
 
     private String description;
 
-    private Long duration;
+    private Double duration;
 
     private VideoState state;
 

@@ -28,13 +28,13 @@ public class Video {
     @Size(max = 1000)
     private String description = "";
 
-    @Builder.Default
-    private Long duration = 0L;
-
     @Enumerated(EnumType.STRING)
     private VideoState state;
 
     @OneToOne
     @JoinColumn(name = "file_metadata_id")
     private FileMetadata rawVideo;
+
+    @Builder.Default
+    private Double duration = 0D;
 }

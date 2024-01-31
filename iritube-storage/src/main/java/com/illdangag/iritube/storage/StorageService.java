@@ -11,7 +11,7 @@ import java.util.Calendar;
 public interface StorageService {
     void uploadFile(FileMetadata fileMetadata, InputStream inputStream);
 
-    IritubeFileInputStream downloadFile(String fileMetadataId);
+    IritubeFileInputStream downloadFile(FileMetadata fileMetadata);
 
     default String getFileExtension(String filePathName) {
         return FilenameUtils.getExtension(filePathName);

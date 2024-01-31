@@ -1,6 +1,6 @@
 package com.illdangag.iritube.server.message.kafka.service.implement;
 
-import com.illdangag.iritube.core.data.message.VideoEncode;
+import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.server.message.service.MessageQueueService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class KafkaServiceImpl implements MessageQueueService {
     }
 
     @Override
-    public void sendMessage(VideoEncode videoEncode) {
-        this.kafkaTemplate.send("video-encode", videoEncode);
+    public void sendMessage(VideoEncodeEvent videoEncodeEvent) {
+        this.kafkaTemplate.send("video-encode", videoEncodeEvent);
     }
 }

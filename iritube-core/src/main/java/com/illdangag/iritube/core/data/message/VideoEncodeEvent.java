@@ -7,6 +7,6 @@ import lombok.*;
 @Getter
 @Builder
 @ToString
-public class VideoEncode {
+public class VideoEncodeEvent {
     private String videoId;
 }

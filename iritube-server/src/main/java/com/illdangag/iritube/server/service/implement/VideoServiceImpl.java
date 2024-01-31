@@ -5,7 +5,7 @@ import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.FileType;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
-import com.illdangag.iritube.core.data.message.VideoEncode;
+import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.AccountRepository;
@@ -77,10 +77,10 @@ public class VideoServiceImpl implements VideoService {
                 .build();
         this.videoRepository.save(video);
 
-        VideoEncode videoEncode = VideoEncode.builder()
+        VideoEncodeEvent videoEncodeEvent = VideoEncodeEvent.builder()
                 .videoId(String.valueOf(video.getId()))
                 .build();
-        this.messageQueueService.sendMessage(videoEncode);
+        this.messageQueueService.sendMessage(videoEncodeEvent);
 
         return new VideoInfo(video);
     }

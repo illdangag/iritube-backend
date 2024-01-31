@@ -19,6 +19,8 @@ repositories {
 dependencies {
     // 상위 프로젝트 의존성
     implementation project(':iritube-core')
+    implementation project(':iritube-storage')
+    implementation project(':iritube-storage:iritube-storage-s3')
     implementation project(':iritube-converter:iritube-mq')
     implementation project(':iritube-converter:iritube-mq:iritube-kafka')
 
