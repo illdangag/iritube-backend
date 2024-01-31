@@ -1,7 +1,9 @@
 package com.illdangag.iritube.storage.s3.service.implement;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -14,12 +16,17 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.illdangag.iritube.core.data.IritubeFileInputStream;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
+import com.illdangag.iritube.core.data.entity.Video;
+import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.storage.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 @Slf4j
@@ -51,30 +58,19 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void uploadFile(FileMetadata fileMetadata, InputStream inputStream) {
-        long contentLength = 0;
+    public void uploadRawVideo(FileMetadata fileMetadata, InputStream inputStream) {
         String key = this.getPath(fileMetadata);
 
-        try {
-            contentLength = (long) inputStream.available();
-        } catch (Exception exception) {
-            // TODO
-        }
-
         AmazonS3 amazonS3 = this.getAmazonS3();
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(contentLength);
-        PutObjectRequest putObjectRequest = new PutObjectRequest(this.BUCKET, key, inputStream, metadata);
-
         try {
-            amazonS3.putObject(putObjectRequest);
+            this.uploadFile(amazonS3, key, inputStream);
         } catch (Exception exception) {
             throw new RuntimeException(exception); // TODO
         }
     }
 
     @Override
-    public IritubeFileInputStream downloadFile(FileMetadata fileMetadata) {
+    public IritubeFileInputStream downloadRawVideo(FileMetadata fileMetadata) {
         String key = this.getPath(fileMetadata);
 
         AmazonS3 amazonS3 = this.getAmazonS3();
@@ -93,6 +89,49 @@ public class S3StorageServiceImpl implements StorageService {
                 .inputStream(inputStream)
                 .fileMetadata(fileMetadata)
                 .build();
+    }
+
+    @Override
+    public void uploadHLSDirectory(Video video, File hlsDirectory) {
+        AmazonS3 amazonS3 = this.getAmazonS3();
+
+        String hlsPath = this.getHLSPath(video);
+
+        String baseHlsDirectoryPath = hlsDirectory.getAbsolutePath();
+
+        File[] files = hlsDirectory.listFiles((file) -> {
+           return !file.isDirectory();
+        });
+        File[] directories = hlsDirectory.listFiles((file) -> {
+            return file.isDirectory();
+        });
+
+//        while (true) {
+//            for (File file : files) {
+//                String key = hlsPath + "/" + file.getAbsolutePath().substring(baseHlsDirectoryPath.length());
+//                InputStream inputStream =
+//                try {
+//
+//                }
+//                InputStream inputStream = new FileInputStream(file);
+//                this.uploadFile(amazonS3, key, );
+//            }
+//        }
+
+        if (!hlsDirectory.isDirectory()) {
+            throw new RuntimeException(); // TODO
+        }
+
+
+    }
+
+
+    private void uploadFile(AmazonS3 amazonS3, String key, InputStream inputStream) throws IOException, SdkClientException, AmazonServiceException {
+        long contentLength = (long) inputStream.available();
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(contentLength);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(this.BUCKET, key, inputStream, metadata);
+        amazonS3.putObject(putObjectRequest);
     }
 
     private AmazonS3 getAmazonS3() {

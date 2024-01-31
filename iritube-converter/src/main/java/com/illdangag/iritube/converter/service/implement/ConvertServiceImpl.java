@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -67,10 +68,11 @@ public class ConvertServiceImpl implements ConvertService {
         });
 
         FileMetadata rawVideoFileMetadata = video.getRawVideo();
-        InputStream rawVideoFileInputStream = this.storageService.downloadFile(rawVideoFileMetadata);
+        InputStream rawVideoFileInputStream = this.storageService.downloadRawVideo(rawVideoFileMetadata);
 
         VideoConverter videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
         VideoMetadata videoMetadata = videoConverter.getVideoMetadata();
+        File hslDirectory = videoConverter.createHSL();
 
         video.setDuration(videoMetadata.getDuration());
         this.videoRepository.save(video);

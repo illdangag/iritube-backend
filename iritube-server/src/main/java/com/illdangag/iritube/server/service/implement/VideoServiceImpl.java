@@ -67,7 +67,7 @@ public class VideoServiceImpl implements VideoService {
                 .type(FileType.RAW_VIDEO)
                 .build();
         this.fileMetadataRepository.save(fileMetadata);
-        this.storageService.uploadFile(fileMetadata, inputStream);
+        this.storageService.uploadRawVideo(fileMetadata, inputStream);
 
         Video video = Video.builder()
                 .title(videoInfoCreate.getTitle())

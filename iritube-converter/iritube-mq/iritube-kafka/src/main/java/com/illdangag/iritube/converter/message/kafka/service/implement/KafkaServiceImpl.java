@@ -19,7 +19,8 @@ public class KafkaServiceImpl implements MessageQueueService {
         this.videoEncodeEventListener = videoEncodeEventListener;
     }
 
-    @KafkaListener(topics = "video-encode", groupId = "#{T(java.util.UUID).randomUUID().toString()}")
+//    @KafkaListener(topics = "video-encode", groupId = "#{T(java.util.UUID).randomUUID().toString()}")
+    @KafkaListener(topics = "video-encode", groupId = "converter-00")
     public void consume(VideoEncodeEvent videoEncodeEvent) throws IOException {
         log.info("consume: {}", videoEncodeEvent.toString());
 

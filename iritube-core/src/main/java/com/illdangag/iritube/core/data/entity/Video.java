@@ -4,6 +4,9 @@ import com.illdangag.iritube.core.data.entity.type.VideoState;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,6 +22,10 @@ public class Video {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Builder.Default
+    @CreationTimestamp
+    private LocalDateTime createDate = LocalDateTime.now();
 
     @Builder.Default
     @Size(max = 100)
