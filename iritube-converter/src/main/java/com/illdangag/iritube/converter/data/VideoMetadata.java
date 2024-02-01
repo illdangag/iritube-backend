@@ -9,4 +9,6 @@ public class VideoMetadata {
     private int width;
     private int height;
     private double duration;
+    private boolean isContainAudio;
+    private boolean isRotate;
 }
