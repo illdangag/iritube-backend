@@ -14,8 +14,20 @@ public class IritubeException extends RuntimeException {
         this.message = "";
     }
 
+    public IritubeException(IritubeError error, Exception exception) {
+        super(error.toString(), exception);
+        this.error = error;
+        this.message = "";
+    }
+
     public IritubeException(IritubeError error, String message) {
         super(error.toString());
+        this.error = error;
+        this.message = message;
+    }
+
+    public IritubeException(IritubeError error, String message, Exception exception) {
+        super(error.toString(), exception);
         this.error = error;
         this.message = message;
     }

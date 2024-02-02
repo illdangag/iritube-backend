@@ -16,7 +16,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.illdangag.iritube.core.data.Const;
 import com.illdangag.iritube.core.data.IritubeFileInputStream;
-import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.FileType;
@@ -145,7 +144,7 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public InputStream downloadVideoPlaylist(Video video, int quality) {
+    public InputStream downloadVideoPlaylist(Video video, String quality) {
         AmazonS3 amazonS3 = this.getAmazonS3();
         FileMetadata hlsDirectory = video.getHlsVideo();
         String hlsPath = this.getPath(video, hlsDirectory);
@@ -153,7 +152,7 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public InputStream downloadVideo(Video video, int quality, String videoFile) {
+    public InputStream downloadVideo(Video video, String quality, String videoFile) {
         AmazonS3 amazonS3 = this.getAmazonS3();
         FileMetadata hlsDirectory = video.getHlsVideo();
         String hlsPath = this.getPath(video, hlsDirectory);

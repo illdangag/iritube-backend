@@ -13,7 +13,7 @@ public interface VideoService {
 
     InputStream getVideoHlsMaster(String videoId);
 
-    InputStream getVideoPlaylist(String videoId, int quality);
+    InputStream getVideoPlaylist(String videoId, String quality);
 
-    InputStream getVideo(String videoId, int quality, String videoFile);
+    InputStream getVideo(String videoId, String quality, String videoFile);
 }

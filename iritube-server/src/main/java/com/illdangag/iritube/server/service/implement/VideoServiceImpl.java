@@ -3,7 +3,6 @@ package com.illdangag.iritube.server.service.implement;
 import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
-import com.illdangag.iritube.core.data.entity.type.FileType;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -84,7 +82,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public InputStream getVideoPlaylist(String videoId, int quality) {
+    public InputStream getVideoPlaylist(String videoId, String quality) {
         Video video = this.getVideo(videoId);
         if (video.getState() != VideoState.ENABLED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
@@ -94,7 +92,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public InputStream getVideo(String videoId, int quality, String videoFile) {
+    public InputStream getVideo(String videoId, String quality, String videoFile) {
         Video video = this.getVideo(videoId);
         if (video.getState() != VideoState.ENABLED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
@@ -113,9 +111,7 @@ public class VideoServiceImpl implements VideoService {
         }
 
         Optional<Video> videoOptional = this.videoRepository.getVideo(id);
-        return videoOptional.orElseThrow(() -> {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
-        });
+        return videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
     }
 
     private Account getAccount(String accountId) {
@@ -128,8 +124,6 @@ public class VideoServiceImpl implements VideoService {
         }
 
         Optional<Account> accountOptional = this.accountRepository.getAccount(id);
-        return accountOptional.orElseThrow(() -> {
-            return new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT);
-        });
+        return accountOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT));
     }
 }

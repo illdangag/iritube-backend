@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 /**
- * 0100****
+ * -  인증 firebase 오류: 0101****
  */
 public enum IritubeFirebaseError implements IritubeError {
     NOT_EXIST_FIREBASE_ID_TOKEN("01010000", 401, "Not exist token."),

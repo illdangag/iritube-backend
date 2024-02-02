@@ -19,9 +19,9 @@ public interface StorageService {
 
     InputStream downloadVideoHlsMaster(Video video);
 
-    InputStream downloadVideoPlaylist(Video video, int quality);
+    InputStream downloadVideoPlaylist(Video video, String quality);
 
-    InputStream downloadVideo(Video video, int quality, String videoFile);
+    InputStream downloadVideo(Video video, String quality, String videoFile);
 
     default String getFileExtension(String filePathName) {
         return FilenameUtils.getExtension(filePathName);

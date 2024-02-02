@@ -20,14 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @RestController
@@ -40,7 +36,7 @@ public class VideoController {
         this.videoService = videoService;
     }
 
-    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
+    @IritubeAuthorization(type = {IritubeAuthorizationType.ACCOUNT,})
     @RequestMapping(method = RequestMethod.POST, path = "/upload")
     public ResponseEntity<VideoInfo> uploadFile(@RequestParam(value = "video") MultipartFile file,
                                                 @RequestParam(value = "request") String request,
@@ -64,7 +60,7 @@ public class VideoController {
         return ResponseEntity.status(HttpStatus.OK).body(videoInfo);
     }
 
-    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
+    @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
     @RequestMapping(method = RequestMethod.GET, path = "/{videoId}/" + Const.HLS_MASTER_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoId") String videoId) {
         InputStream inputStream = this.videoService.getVideoHlsMaster(videoId);
@@ -75,21 +71,21 @@ public class VideoController {
             resource = new ByteArrayResource(bytes);
             contentLength = bytes.length;
         } catch (Exception exception) {
-            // TODO
+            String message = String.format("video: %s", videoId);
+            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_MASTER_FILE_INPUT_STREAM, message, exception);
         }
 
         return ResponseEntity
                 .ok()
                 .contentLength(contentLength)
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + URLEncoder.encode(Const.HLS_MASTER_FILE, StandardCharsets.UTF_8) + "\"")
+                .headers(getStreamResponseHeader(Const.HLS_MASTER_FILE))
                 .body(resource);
     }
 
-    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
+    @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
     @RequestMapping(method = RequestMethod.GET, path = "/{videoId}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoId") String videoId,
-                                                                 @PathVariable(value = "quality") int quality) {
+                                                                 @PathVariable(value = "quality") String quality) {
         InputStream inputStream = this.videoService.getVideoPlaylist(videoId, quality);
         ByteArrayResource resource = null;
         long contentLength = 0;
@@ -98,23 +94,23 @@ public class VideoController {
             resource = new ByteArrayResource(bytes);
             contentLength = bytes.length;
         } catch (Exception exception) {
-            // TODO
+            String message = String.format("video: %s, quality: %s", videoId, quality);
+            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_PLAYLIST_FILE_INPUT_STREAM, message, exception);
         }
 
         return ResponseEntity
                 .ok()
                 .contentLength(contentLength)
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + URLEncoder.encode(Const.HLS_PLAY_LIST_FILE, StandardCharsets.UTF_8) + "\"")
+                .headers(getStreamResponseHeader(Const.HLS_PLAY_LIST_FILE))
                 .body(resource);
     }
 
-    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
-    @RequestMapping(method = RequestMethod.GET, path = "/{videoId}/{quality}/{videoFile}")
+    @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
+    @RequestMapping(method = RequestMethod.GET, path = "/{videoId}/{quality}/{tsFileName}")
     public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoId") String videoId,
-                                                                  @PathVariable(value = "quality") int quality,
-                                                                  @PathVariable(value = "videoFile") String videoFile) {
-        InputStream inputStream = this.videoService.getVideo(videoId, quality, videoFile);
+                                                              @PathVariable(value = "quality") String quality,
+                                                              @PathVariable(value = "tsFileName") String tsFileName) {
+        InputStream inputStream = this.videoService.getVideo(videoId, quality, tsFileName);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -122,15 +118,21 @@ public class VideoController {
             resource = new ByteArrayResource(bytes);
             contentLength = bytes.length;
         } catch (Exception exception) {
-            // TODO
+            String message = String.format("video: %s, quality: %s, ts: %s", videoId, quality, tsFileName);
+            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_TS_VIDEO_FILE_INPUT_STREAM, message, exception);
         }
 
         return ResponseEntity
                 .ok()
                 .contentLength(contentLength)
-                .header("Connection", "")
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + URLEncoder.encode(videoFile, StandardCharsets.UTF_8) + "\"")
+                .headers(getStreamResponseHeader(tsFileName))
                 .body(resource);
+    }
+
+    private HttpHeaders getStreamResponseHeader(String fileName) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Content-type", "application/octet-stream");
+        httpHeaders.add("Content-disposition", "attachment; filename=\"" + URLEncoder.encode(fileName, StandardCharsets.UTF_8) + "\"");
+        return httpHeaders;
     }
 }
