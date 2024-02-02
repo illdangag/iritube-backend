@@ -50,32 +50,17 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public VideoInfo uploadVideo(Account account,VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream) {
-        long size = -1;
-
-        try {
-            size = inputStream.available();
-        } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_VIDEO_FILE);
-        }
-
-        FileMetadata fileMetadata = FileMetadata.builder()
-                .account(account)
-                .fileId(UUID.randomUUID())
-                .originName(fileName)
-                .size(size)
-                .type(FileType.RAW_VIDEO)
-                .build();
-        this.fileMetadataRepository.save(fileMetadata);
-        this.storageService.uploadRawVideo(fileMetadata, inputStream);
-
+    public VideoInfo uploadVideo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream) {
         Video video = Video.builder()
                 .title(videoInfoCreate.getTitle())
                 .description(videoInfoCreate.getDescription())
-                .state(VideoState.UPLOADED)
-                .rawVideo(fileMetadata)
+                .account(account)
+                .state(VideoState.EMPTY)
                 .build();
         this.videoRepository.save(video);
+
+        FileMetadata rawVideoFileMetadata = this.storageService.uploadRawVideo(video, fileName, inputStream);
+        this.fileMetadataRepository.save(rawVideoFileMetadata);
 
         VideoEncodeEvent videoEncodeEvent = VideoEncodeEvent.builder()
                 .videoId(String.valueOf(video.getId()))

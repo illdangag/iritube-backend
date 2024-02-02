@@ -16,8 +16,12 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.illdangag.iritube.core.data.Const;
 import com.illdangag.iritube.core.data.IritubeFileInputStream;
+import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
+import com.illdangag.iritube.core.data.entity.type.FileType;
+import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.storage.StorageService;
 import com.illdangag.iritube.storage.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Service
@@ -59,7 +64,22 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void uploadRawVideo(FileMetadata fileMetadata, InputStream inputStream) {
+    public FileMetadata uploadRawVideo(Video video, String fileName, InputStream inputStream) {
+        long size = -1;
+
+        try {
+            size = inputStream.available();
+        } catch (Exception exception) {
+            throw new IritubeException(IritubeCoreError.INVALID_VIDEO_FILE);
+        }
+
+        FileMetadata fileMetadata = FileMetadata.builder()
+                .account(video.getAccount())
+                .originName(fileName)
+                .size(size)
+                .type(FileType.RAW_VIDEO)
+                .build();
+        
         String key = this.getPath(fileMetadata);
 
         AmazonS3 amazonS3 = this.getAmazonS3();
@@ -68,6 +88,8 @@ public class S3StorageServiceImpl implements StorageService {
         } catch (Exception exception) {
             throw new RuntimeException(exception); // TODO
         }
+
+        return fileMetadata;
     }
 
     @Override
@@ -84,45 +106,56 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void uploadHLSDirectory(Video video, File hlsDirectory) {
+    public FileMetadata uploadHLSDirectory(Video video, File hlsDirectory) {
         AmazonS3 amazonS3 = this.getAmazonS3();
 
-        String hlsPath = this.getHLSPath(video);
+        FileMetadata hlsDirectoryFileMetadata = FileMetadata.builder()
+                .account(video.getAccount())
+                .type(FileType.HLS_DIRECTORY)
+                .size(0L)
+                .build();
+        String hlsPath = this.getPath(hlsDirectoryFileMetadata);
         String baseHlsDirectoryPath = hlsDirectory.getAbsolutePath();
+
+        AtomicLong size = new AtomicLong(0);
 
         FileUtils.scanFile(hlsDirectory, (file -> {
             String fileAbsoluteFile = file.getAbsolutePath();
             String postFix = fileAbsoluteFile.substring(baseHlsDirectoryPath.length() + 1);
             String key = hlsPath + "/" + postFix;
-
+            size.set(size.intValue() + file.length());
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
                 this.uploadFile(amazonS3, key, fileInputStream);
             } catch (Exception exception) {}
         }));
+
+        hlsDirectoryFileMetadata.setSize(size.get());
+
+        return hlsDirectoryFileMetadata;
     }
 
     @Override
     public InputStream downloadVideoHlsMaster(Video video) {
         AmazonS3 amazonS3 = this.getAmazonS3();
-
-        String hlsPath = this.getHLSPath(video);
+        FileMetadata hlsDirectory = video.getHlsVideo();
+        String hlsPath = this.getPath(hlsDirectory);
         return this.downloadFile(amazonS3, hlsPath + "/" + Const.HLS_MASTER_FILE);
     }
 
     @Override
     public InputStream downloadVideoPlaylist(Video video, int quality) {
         AmazonS3 amazonS3 = this.getAmazonS3();
-
-        String hlsPath = this.getHLSPath(video);
+        FileMetadata hlsDirectory = video.getHlsVideo();
+        String hlsPath = this.getPath(hlsDirectory);
         return this.downloadFile(amazonS3, hlsPath + "/" + quality + "/" + Const.HLS_PLAY_LIST_FILE);
     }
 
     @Override
     public InputStream downloadVideo(Video video, int quality, String videoFile) {
         AmazonS3 amazonS3 = this.getAmazonS3();
-
-        String hlsPath = this.getHLSPath(video);
+        FileMetadata hlsDirectory = video.getHlsVideo();
+        String hlsPath = this.getPath(hlsDirectory);
         return this.downloadFile(amazonS3, hlsPath + "/" + quality + "/" + videoFile);
     }
 

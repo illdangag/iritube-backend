@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum VideoState {
+    EMPTY,
     UPLOADED,
     ENCODING,
     ENABLED;

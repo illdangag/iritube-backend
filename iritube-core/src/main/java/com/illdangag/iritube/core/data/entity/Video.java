@@ -27,6 +27,10 @@ public class Video {
     @CreationTimestamp
     private LocalDateTime createDate = LocalDateTime.now();
 
+    @ManyToOne
+    @JoinColumn(name = "acount_id")
+    private Account account;
+
     @Builder.Default
     @Size(max = 100)
     private String title = "";
@@ -39,8 +43,12 @@ public class Video {
     private VideoState state;
 
     @OneToOne
-    @JoinColumn(name = "file_metadata_id")
+    @JoinColumn(name = "raw_video_file_matadata_id")
     private FileMetadata rawVideo;
+
+    @OneToOne
+    @JoinColumn(name = "hls_video_file_matadata_id")
+    private FileMetadata hlsVideo;
 
     @Builder.Default
     private Double duration = 0D;

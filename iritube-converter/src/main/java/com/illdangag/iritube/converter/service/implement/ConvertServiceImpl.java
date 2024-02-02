@@ -10,6 +10,7 @@ import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
+import com.illdangag.iritube.core.repository.FileMetadataRepository;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.storage.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class ConvertServiceImpl implements ConvertService {
     private final String FFMPEG_PATH;
     private final String FFPROBE_PATH;
 
+    private final FileMetadataRepository fileMetadataRepository;
     private final VideoRepository videoRepository;
     private final MessageQueueService messageQueueService;
     private final StorageService storageService;
@@ -37,6 +39,7 @@ public class ConvertServiceImpl implements ConvertService {
     public ConvertServiceImpl(@Value("${convert.temp.path:#{null}}") String tempPath,
                               @Value("${convert.ffmpeg.path:#{null}}") String ffmpegPath,
                               @Value("${convert.ffprobe.path:#{null}}") String ffprobePath,
+                              FileMetadataRepository fileMetadataRepository,
                               VideoRepository videoRepository,
                               MessageQueueService messageQueueService,
                               StorageService storageService) {
@@ -47,6 +50,7 @@ public class ConvertServiceImpl implements ConvertService {
         log.info("ffmpeg path: {}", this.FFMPEG_PATH);
         log.info("ffprobe path: {}", this.FFPROBE_PATH);
 
+        this.fileMetadataRepository = fileMetadataRepository;
         this.videoRepository = videoRepository;
         this.messageQueueService = messageQueueService;
         this.storageService = storageService;
@@ -79,8 +83,11 @@ public class ConvertServiceImpl implements ConvertService {
         this.videoRepository.save(video);
 
         File hlsDirectory = videoConverter.createHls();
-        this.storageService.uploadHLSDirectory(video, hlsDirectory);
+        FileMetadata hlsDirectoryFileMetadata = this.storageService.uploadHLSDirectory(video, hlsDirectory);
+        this.fileMetadataRepository.save(hlsDirectoryFileMetadata);
+
         video.setState(VideoState.ENABLED);
+        video.setHlsVideo(hlsDirectoryFileMetadata);
         this.videoRepository.save(video);
 
         videoConverter.clear();

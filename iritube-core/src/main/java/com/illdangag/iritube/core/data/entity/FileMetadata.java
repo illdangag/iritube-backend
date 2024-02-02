@@ -38,7 +38,8 @@ public class FileMetadata {
     @Size(max = 50)
     private String originName;
 
-    private UUID fileId;
+    @Builder.Default
+    private UUID fileId = UUID.randomUUID();
 
     private Long size;
 }
