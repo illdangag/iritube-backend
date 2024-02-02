@@ -79,8 +79,8 @@ public class S3StorageServiceImpl implements StorageService {
                 .size(size)
                 .type(FileType.RAW_VIDEO)
                 .build();
-        
-        String key = this.getPath(fileMetadata);
+
+        String key = this.getPath(video, fileMetadata);
 
         AmazonS3 amazonS3 = this.getAmazonS3();
         try {
@@ -93,9 +93,10 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public IritubeFileInputStream downloadRawVideo(FileMetadata fileMetadata) {
+    public IritubeFileInputStream downloadRawVideo(Video video) {
         AmazonS3 amazonS3 = this.getAmazonS3();
-        String key = this.getPath(fileMetadata);
+        FileMetadata fileMetadata = video.getRawVideo();
+        String key = this.getPath(video, fileMetadata);
 
         InputStream inputStream = this.downloadFile(amazonS3, key);
 
@@ -114,7 +115,7 @@ public class S3StorageServiceImpl implements StorageService {
                 .type(FileType.HLS_DIRECTORY)
                 .size(0L)
                 .build();
-        String hlsPath = this.getPath(hlsDirectoryFileMetadata);
+        String hlsPath = this.getPath(video, hlsDirectoryFileMetadata);
         String baseHlsDirectoryPath = hlsDirectory.getAbsolutePath();
 
         AtomicLong size = new AtomicLong(0);
@@ -139,7 +140,7 @@ public class S3StorageServiceImpl implements StorageService {
     public InputStream downloadVideoHlsMaster(Video video) {
         AmazonS3 amazonS3 = this.getAmazonS3();
         FileMetadata hlsDirectory = video.getHlsVideo();
-        String hlsPath = this.getPath(hlsDirectory);
+        String hlsPath = this.getPath(video, hlsDirectory);
         return this.downloadFile(amazonS3, hlsPath + "/" + Const.HLS_MASTER_FILE);
     }
 
@@ -147,7 +148,7 @@ public class S3StorageServiceImpl implements StorageService {
     public InputStream downloadVideoPlaylist(Video video, int quality) {
         AmazonS3 amazonS3 = this.getAmazonS3();
         FileMetadata hlsDirectory = video.getHlsVideo();
-        String hlsPath = this.getPath(hlsDirectory);
+        String hlsPath = this.getPath(video, hlsDirectory);
         return this.downloadFile(amazonS3, hlsPath + "/" + quality + "/" + Const.HLS_PLAY_LIST_FILE);
     }
 
@@ -155,12 +156,12 @@ public class S3StorageServiceImpl implements StorageService {
     public InputStream downloadVideo(Video video, int quality, String videoFile) {
         AmazonS3 amazonS3 = this.getAmazonS3();
         FileMetadata hlsDirectory = video.getHlsVideo();
-        String hlsPath = this.getPath(hlsDirectory);
+        String hlsPath = this.getPath(video, hlsDirectory);
         return this.downloadFile(amazonS3, hlsPath + "/" + quality + "/" + videoFile);
     }
 
     private void uploadFile(AmazonS3 amazonS3, String key, InputStream inputStream) throws IOException, SdkClientException, AmazonServiceException {
-        long contentLength = (long) inputStream.available();
+        long contentLength = inputStream.available();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(contentLength);
         PutObjectRequest putObjectRequest = new PutObjectRequest(this.BUCKET, key, inputStream, metadata);

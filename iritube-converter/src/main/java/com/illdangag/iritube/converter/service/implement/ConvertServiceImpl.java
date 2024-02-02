@@ -72,8 +72,7 @@ public class ConvertServiceImpl implements ConvertService {
             return new IritubeConvertException(IritubeConverterError.NOT_EXIST_VIDEO, "video: " + videoId);
         });
 
-        FileMetadata rawVideoFileMetadata = video.getRawVideo();
-        InputStream rawVideoFileInputStream = this.storageService.downloadRawVideo(rawVideoFileMetadata);
+        InputStream rawVideoFileInputStream = this.storageService.downloadRawVideo(video);
 
         VideoConverter videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
         VideoMetadata videoMetadata = videoConverter.getVideoMetadata();

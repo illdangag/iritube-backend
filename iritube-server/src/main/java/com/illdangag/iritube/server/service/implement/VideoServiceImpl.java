@@ -62,6 +62,9 @@ public class VideoServiceImpl implements VideoService {
         FileMetadata rawVideoFileMetadata = this.storageService.uploadRawVideo(video, fileName, inputStream);
         this.fileMetadataRepository.save(rawVideoFileMetadata);
 
+        video.setRawVideo(rawVideoFileMetadata);
+        this.videoRepository.save(video);
+
         VideoEncodeEvent videoEncodeEvent = VideoEncodeEvent.builder()
                 .videoId(String.valueOf(video.getId()))
                 .build();

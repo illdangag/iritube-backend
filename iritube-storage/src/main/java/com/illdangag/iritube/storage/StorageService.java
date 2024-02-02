@@ -13,7 +13,7 @@ import java.util.Calendar;
 public interface StorageService {
     FileMetadata uploadRawVideo(Video video, String fileName, InputStream inputStream);
 
-    IritubeFileInputStream downloadRawVideo(FileMetadata fileMetadata);
+    IritubeFileInputStream downloadRawVideo(Video video);
 
     FileMetadata uploadHLSDirectory(Video video, File hlsDirectory);
 
@@ -31,9 +31,9 @@ public interface StorageService {
         return FilenameUtils.getBaseName(filePathName);
     }
 
-    default String getPath(FileMetadata fileMetadata) {
-        Calendar createDate = DateTimeUtils.getCalendar(fileMetadata.getCreateDate());
-        String path = String.format("%04d-%02d-%02d/%d", createDate.get(Calendar.YEAR), createDate.get(Calendar.MONTH) + 1, createDate.get(Calendar.DATE), fileMetadata.getId());
+    default String getPath(Video video, FileMetadata fileMetadata) {
+        Calendar createDate = DateTimeUtils.getCalendar(video.getCreateDate());
+        String path = String.format("%04d-%02d-%02d/%d", createDate.get(Calendar.YEAR), createDate.get(Calendar.MONTH) + 1, createDate.get(Calendar.DATE), video.getId());
 
         return switch (fileMetadata.getType()) {
             case RAW_VIDEO -> path + "/RAW_VIDEO";
