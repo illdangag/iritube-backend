@@ -69,6 +69,9 @@ public class Video {
     @Builder.Default
     private Double duration = 0D;
 
+    @Builder.Default
+    private Boolean deleted = false;
+
     private static String createVideoKey() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     }

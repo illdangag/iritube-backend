@@ -20,7 +20,7 @@ public class VideoRepositoryImpl implements VideoRepository {
 
     @Override
     public Optional<Video> getVideo(long id) {
-        String jpql = "SELECT v FROM Video v WHERE v.id = :id";
+        String jpql = "SELECT v FROM Video v WHERE v.id = :id AND v.deleted = false";
 
         TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
                 .setParameter("id", id);
@@ -35,7 +35,7 @@ public class VideoRepositoryImpl implements VideoRepository {
 
     @Override
     public Optional<Video> getVideo(String videoKey) {
-        String jpql = "SELECT v FROM Video v WHERE v.videoKey = :videoKey";
+        String jpql = "SELECT v FROM Video v WHERE v.videoKey = :videoKey AND v.deleted = false";
 
         TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
                 .setParameter("videoKey", videoKey);

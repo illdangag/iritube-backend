@@ -66,6 +66,9 @@ public class VideoController {
         return ResponseEntity.status(HttpStatus.OK).body(videoInfo);
     }
 
+    /**
+     * 동영상 정보 수정
+     */
     @IritubeAuthorization(type = {
             IritubeAuthorizationType.ACCOUNT,
     })
@@ -74,6 +77,19 @@ public class VideoController {
                                                  @RequestBody VideoInfoUpdate videoInfoUpdate,
                                                  @RequestContext Account account) {
         VideoInfo videoInfo = this.videoService.updateVideo(account, videoId, videoInfoUpdate);
+        return ResponseEntity.status(HttpStatus.OK).body(videoInfo);
+    }
+
+    /**
+     * 동영상 삭제
+     */
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.ACCOUNT,
+    })
+    @RequestMapping(method = RequestMethod.DELETE, path = "/video/{videoId}")
+    public ResponseEntity<VideoInfo> deleteVideo(@PathVariable(value = "videoId") String videoId,
+                                                 @RequestContext Account account) {
+        VideoInfo videoInfo = this.videoService.deleteVideo(account, videoId);
         return ResponseEntity.status(HttpStatus.OK).body(videoInfo);
     }
 }

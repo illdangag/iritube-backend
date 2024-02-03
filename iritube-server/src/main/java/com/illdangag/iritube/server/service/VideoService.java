@@ -15,4 +15,8 @@ public interface VideoService {
     VideoInfo updateVideo(String accountId, String videoId, VideoInfoUpdate videoInfoUpdate);
 
     VideoInfo updateVideo(Account account, String videoId, VideoInfoUpdate videoInfoUpdate);
+
+    VideoInfo deleteVideo(String accountId, String videoId);
+
+    VideoInfo deleteVideo(Account account, String videoId);
 }

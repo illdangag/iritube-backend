@@ -104,6 +104,25 @@ public class VideoServiceImpl implements VideoService {
         return new VideoInfo(video);
     }
 
+    @Override
+    public VideoInfo deleteVideo(String accountId, String videoId) {
+        Account account = this.getAccount(accountId);
+        return this.deleteVideo(account, videoId);
+    }
+
+    @Override
+    public VideoInfo deleteVideo(Account account, String videoId) {
+        Video video = this.getVideo(videoId);
+
+        if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+        }
+
+        video.setDeleted(true);
+        this.videoRepository.save(video);
+        return new VideoInfo(video);
+    }
+
     private Video getVideo(String videoId) {
         long id = -1;
 
