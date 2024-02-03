@@ -1,12 +1,19 @@
 package com.illdangag.iritube.core.data.entity;
 
 import com.illdangag.iritube.core.data.entity.type.VideoState;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -32,6 +39,11 @@ public class Video {
     private Account account;
 
     @Builder.Default
+    @NotNull
+    @NotBlank
+    private String videoKey = createVideoKey();
+
+    @Builder.Default
     @Size(max = 100)
     private String title = "";
 
@@ -52,4 +64,25 @@ public class Video {
 
     @Builder.Default
     private Double duration = 0D;
+
+    private static String createVideoKey() {
+//        return getHashing(UUID.randomUUID().toString());
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    }
+
+    private static String getHashing(String text) {
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-256");
+        } catch (Exception exception) {
+            throw new RuntimeException(exception); // TODO
+        }
+        byte[] hashBytes = messageDigest.digest(text.getBytes(StandardCharsets.UTF_8));
+
+        StringBuffer sb = new StringBuffer();
+        for (byte hashByte : hashBytes) {
+            sb.append(String.format("%02x", hashByte));
+        }
+        return sb.toString();
+    }
 }

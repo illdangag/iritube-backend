@@ -61,9 +61,9 @@ public class VideoController {
     }
 
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
-    @RequestMapping(method = RequestMethod.GET, path = "/{videoId}/" + Const.HLS_MASTER_FILE)
-    public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoId") String videoId) {
-        InputStream inputStream = this.videoService.getVideoHlsMaster(videoId);
+    @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/" + Const.HLS_MASTER_FILE)
+    public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey) {
+        InputStream inputStream = this.videoService.getVideoHlsMaster(videoKey);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -71,7 +71,7 @@ public class VideoController {
             resource = new ByteArrayResource(bytes);
             contentLength = bytes.length;
         } catch (Exception exception) {
-            String message = String.format("video: %s", videoId);
+            String message = String.format("video: %s", videoKey);
             throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_MASTER_FILE_INPUT_STREAM, message, exception);
         }
 
@@ -83,10 +83,10 @@ public class VideoController {
     }
 
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
-    @RequestMapping(method = RequestMethod.GET, path = "/{videoId}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
-    public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoId") String videoId,
+    @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
+    public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoKey") String videoKey,
                                                                  @PathVariable(value = "quality") String quality) {
-        InputStream inputStream = this.videoService.getVideoPlaylist(videoId, quality);
+        InputStream inputStream = this.videoService.getVideoPlaylist(videoKey, quality);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -94,7 +94,7 @@ public class VideoController {
             resource = new ByteArrayResource(bytes);
             contentLength = bytes.length;
         } catch (Exception exception) {
-            String message = String.format("video: %s, quality: %s", videoId, quality);
+            String message = String.format("video: %s, quality: %s", videoKey, quality);
             throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_PLAYLIST_FILE_INPUT_STREAM, message, exception);
         }
 
@@ -106,11 +106,11 @@ public class VideoController {
     }
 
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
-    @RequestMapping(method = RequestMethod.GET, path = "/{videoId}/{quality}/{tsFileName}")
-    public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoId") String videoId,
+    @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/{quality}/{tsFileName}")
+    public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoKey") String videoKey,
                                                               @PathVariable(value = "quality") String quality,
                                                               @PathVariable(value = "tsFileName") String tsFileName) {
-        InputStream inputStream = this.videoService.getVideo(videoId, quality, tsFileName);
+        InputStream inputStream = this.videoService.getVideo(videoKey, quality, tsFileName);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -118,7 +118,7 @@ public class VideoController {
             resource = new ByteArrayResource(bytes);
             contentLength = bytes.length;
         } catch (Exception exception) {
-            String message = String.format("video: %s, quality: %s, ts: %s", videoId, quality, tsFileName);
+            String message = String.format("video: %s, quality: %s, ts: %s", videoKey, quality, tsFileName);
             throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_TS_VIDEO_FILE_INPUT_STREAM, message, exception);
         }
 

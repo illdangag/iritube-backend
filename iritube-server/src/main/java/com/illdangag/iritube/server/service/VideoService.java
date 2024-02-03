@@ -11,9 +11,9 @@ public interface VideoService {
 
     VideoInfo uploadVideo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
 
-    InputStream getVideoHlsMaster(String videoId);
+    InputStream getVideoHlsMaster(String videoKey);
 
-    InputStream getVideoPlaylist(String videoId, String quality);
+    InputStream getVideoPlaylist(String videoKey, String quality);
 
-    InputStream getVideo(String videoId, String quality, String videoFile);
+    InputStream getVideo(String videoKey, String quality, String videoFile);
 }
