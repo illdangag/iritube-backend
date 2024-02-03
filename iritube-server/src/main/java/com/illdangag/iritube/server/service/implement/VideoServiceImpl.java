@@ -4,6 +4,7 @@ import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.VideoTag;
+import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
@@ -87,6 +88,36 @@ public class VideoServiceImpl implements VideoService {
                 .videoId(String.valueOf(video.getId()))
                 .build();
         this.messageQueueService.sendMessage(videoEncodeEvent);
+
+        return new VideoInfo(video);
+    }
+
+    @Override
+    public VideoInfo getVideoByVideoKey(String videoKey) {
+        Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
+        Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
+
+        if (video.getShare() == VideoShare.PRIVATE ) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+        }
+
+        return new VideoInfo(video);
+    }
+
+    @Override
+    public VideoInfo getVideoByVideoKey(String accountId, String videoKey) {
+        Account account = this.getAccount(accountId);
+        return this.getVideoByVideoKey(account, videoKey);
+    }
+
+    @Override
+    public VideoInfo getVideoByVideoKey(Account account, String videoKey) {
+        Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
+        Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
+
+        if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+        }
 
         return new VideoInfo(video);
     }
