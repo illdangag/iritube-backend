@@ -29,7 +29,7 @@ public class FileMetadata {
     private LocalDateTime createDate = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "acocunt_id")
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @Enumerated(EnumType.STRING)
