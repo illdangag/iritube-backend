@@ -1,14 +1,20 @@
 package com.illdangag.iritube.server.data.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class VideoInfoUpdate {
     @Size(min = 1, max = 100, message = "The title must be at least 1 character and less than 100 characters.")
     private String title;
@@ -17,4 +23,7 @@ public class VideoInfoUpdate {
     private String description;
 
     private VideoShare share;
+
+    @JsonProperty("videoTags")
+    private List<String> videoTagList;
 }

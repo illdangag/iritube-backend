@@ -1,6 +1,7 @@
 package com.illdangag.iritube.core.repository.implement;
 
 import com.illdangag.iritube.core.data.entity.Video;
+import com.illdangag.iritube.core.data.entity.VideoTag;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -55,6 +56,22 @@ public class VideoRepositoryImpl implements VideoRepository {
         } else {
             this.entityManager.persist(video);
         }
+        this.entityManager.flush();
+    }
+
+    @Override
+    public void save(VideoTag videoTag) {
+        if (videoTag.getId() != null) {
+            this.entityManager.merge(videoTag);
+        } else {
+            this.entityManager.persist(videoTag);
+        }
+        this.entityManager.flush();
+    }
+
+    @Override
+    public void remove(VideoTag videoTag) {
+        this.entityManager.remove(videoTag);
         this.entityManager.flush();
     }
 }

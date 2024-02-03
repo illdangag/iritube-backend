@@ -3,6 +3,7 @@ package com.illdangag.iritube.server.service.implement;
 import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
+import com.illdangag.iritube.core.data.entity.VideoTag;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
@@ -20,7 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -57,6 +62,19 @@ public class VideoServiceImpl implements VideoService {
                 .share(videoInfoCreate.getShare())
                 .state(VideoState.EMPTY)
                 .build();
+        this.videoRepository.save(video);
+
+        List<VideoTag> videoTagList = videoInfoCreate.getVideoTagList().stream()
+                .distinct()
+                .map(tag -> {
+                    return VideoTag.builder()
+                            .video(video)
+                            .tag(tag)
+                            .build();
+                })
+                .collect(Collectors.toList());
+        videoTagList.forEach(this.videoRepository::save);
+        video.setVideoTagList(videoTagList);
         this.videoRepository.save(video);
 
         FileMetadata rawVideoFileMetadata = this.storageService.uploadRawVideo(video, fileName, inputStream);
@@ -100,6 +118,30 @@ public class VideoServiceImpl implements VideoService {
         }
 
         this.videoRepository.save(video);
+
+        if (videoInfoUpdate.getVideoTagList() != null) {
+            List<VideoTag> videoTagList = video.getVideoTagList();
+            List<VideoTag> updateVideoTagList = videoInfoUpdate.getVideoTagList().stream()
+                    .map(tag -> VideoTag.builder()
+                            .video(video)
+                            .tag(tag)
+                            .build())
+                    .collect(Collectors.toList());
+
+            updateVideoTagList.forEach(videoTag -> {
+                if (!videoTagList.contains(videoTag)) {
+                    this.videoRepository.save(videoTag);
+                }
+            });
+
+            videoTagList.forEach(videoTag -> {
+                if (!updateVideoTagList.contains(videoTag)) {
+                    this.videoRepository.remove(videoTag);
+                }
+            });
+
+            video.setVideoTagList(updateVideoTagList);
+        }
 
         return new VideoInfo(video);
     }

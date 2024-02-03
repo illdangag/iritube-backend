@@ -2,7 +2,6 @@ package com.illdangag.iritube.core.data.entity;
 
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,10 +9,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -68,6 +66,10 @@ public class Video {
 
     @Builder.Default
     private Double duration = 0D;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "video", fetch = FetchType.LAZY)
+    List<VideoTag> videoTagList = new ArrayList<>();
 
     @Builder.Default
     private Boolean deleted = false;
