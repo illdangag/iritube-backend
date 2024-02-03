@@ -2,6 +2,7 @@ package com.illdangag.iritube.server.service;
 
 import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
+import com.illdangag.iritube.server.data.request.VideoInfoUpdate;
 import com.illdangag.iritube.server.data.response.VideoInfo;
 
 import java.io.InputStream;
@@ -11,9 +12,7 @@ public interface VideoService {
 
     VideoInfo uploadVideo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
 
-    InputStream getVideoHlsMaster(String videoKey);
+    VideoInfo updateVideo(String accountId, String videoId, VideoInfoUpdate videoInfoUpdate);
 
-    InputStream getVideoPlaylist(String videoKey, String quality);
-
-    InputStream getVideo(String videoKey, String quality, String videoFile);
+    VideoInfo updateVideo(Account account, String videoId, VideoInfoUpdate videoInfoUpdate);
 }

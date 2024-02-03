@@ -9,6 +9,7 @@ import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
+import com.illdangag.iritube.server.data.request.VideoInfoUpdate;
 import com.illdangag.iritube.server.data.response.VideoInfo;
 import com.illdangag.iritube.server.service.VideoService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/v1/video")
+@RequestMapping(value = "/v1")
 public class VideoController {
     private final VideoService videoService;
 
@@ -39,9 +40,11 @@ public class VideoController {
     /**
      * 동영상 업로드
      */
-    @IritubeAuthorization(type = {IritubeAuthorizationType.ACCOUNT,})
-    @RequestMapping(method = RequestMethod.POST, path = "/upload")
-    public ResponseEntity<VideoInfo> uploadFile(@RequestParam(value = "video") MultipartFile file,
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.ACCOUNT,
+    })
+    @RequestMapping(method = RequestMethod.POST, path = "/video")
+    public ResponseEntity<VideoInfo> uploadVideo(@RequestParam(value = "video") MultipartFile file,
                                                 @RequestParam(value = "request") String request,
                                                 @RequestContext Account account) {
         InputStream inputStream;
@@ -60,6 +63,17 @@ public class VideoController {
         }
 
         VideoInfo videoInfo = this.videoService.uploadVideo(account, videoInfoCreate, file.getOriginalFilename(), inputStream);
+        return ResponseEntity.status(HttpStatus.OK).body(videoInfo);
+    }
+
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.ACCOUNT,
+    })
+    @RequestMapping(method = RequestMethod.PATCH, path = "/video/{videoId}")
+    public ResponseEntity<VideoInfo> updateVideo(@PathVariable(value = "videoId") String videoId,
+                                                 @RequestBody VideoInfoUpdate videoInfoUpdate,
+                                                 @RequestContext Account account) {
+        VideoInfo videoInfo = this.videoService.updateVideo(account, videoId, videoInfoUpdate);
         return ResponseEntity.status(HttpStatus.OK).body(videoInfo);
     }
 }

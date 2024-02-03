@@ -5,7 +5,7 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.data.Const;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
-import com.illdangag.iritube.server.service.VideoService;
+import com.illdangag.iritube.server.service.VideoStreamService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping(value = "/v1/stream")
 public class VideoStreamController {
-    private final VideoService videoService;
+    private final VideoStreamService videoStreamService;
 
     @Autowired
-    public VideoStreamController(VideoService videoService) {
-        this.videoService = videoService;
+    public VideoStreamController(VideoStreamService videoStreamService) {
+        this.videoStreamService = videoStreamService;
     }
 
     /**
@@ -38,7 +38,7 @@ public class VideoStreamController {
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
     @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/" + Const.HLS_MASTER_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey) {
-        InputStream inputStream = this.videoService.getVideoHlsMaster(videoKey);
+        InputStream inputStream = this.videoStreamService.getVideoHlsMaster(videoKey);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -64,7 +64,7 @@ public class VideoStreamController {
     @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoKey") String videoKey,
                                                                  @PathVariable(value = "quality") String quality) {
-        InputStream inputStream = this.videoService.getVideoPlaylist(videoKey, quality);
+        InputStream inputStream = this.videoStreamService.getVideoPlaylist(videoKey, quality);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -91,7 +91,7 @@ public class VideoStreamController {
     public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoKey") String videoKey,
                                                               @PathVariable(value = "quality") String quality,
                                                               @PathVariable(value = "tsFileName") String tsFileName) {
-        InputStream inputStream = this.videoService.getVideo(videoKey, quality, tsFileName);
+        InputStream inputStream = this.videoStreamService.getVideo(videoKey, quality, tsFileName);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {

@@ -11,6 +11,7 @@ import com.illdangag.iritube.core.repository.AccountRepository;
 import com.illdangag.iritube.core.repository.FileMetadataRepository;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
+import com.illdangag.iritube.server.data.request.VideoInfoUpdate;
 import com.illdangag.iritube.server.data.response.VideoInfo;
 import com.illdangag.iritube.server.message.service.MessageQueueService;
 import com.illdangag.iritube.server.service.VideoService;
@@ -72,37 +73,43 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public InputStream getVideoHlsMaster(String videoKey) {
-        Video video = this.getVideo(videoKey);
-        if (video.getState() != VideoState.ENABLED) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
-        }
-
-        return this.storageService.downloadVideoHlsMaster(video);
+    public VideoInfo updateVideo(String accountId, String videoId, VideoInfoUpdate videoInfoUpdate) {
+        Account account = this.getAccount(accountId);
+        return this.updateVideo(account, videoId, videoInfoUpdate);
     }
 
     @Override
-    public InputStream getVideoPlaylist(String videoKey, String quality) {
-        Video video = this.getVideo(videoKey);
-        if (video.getState() != VideoState.ENABLED) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+    public VideoInfo updateVideo(Account account, String videoId, VideoInfoUpdate videoInfoUpdate) {
+        Video video = this.getVideo(videoId);
+
+        if (!account.equals(video.getAccount())) {
+            // 요청한 계정이 소유한 영상이 아닌 경우
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
         }
 
-        return this.storageService.downloadVideoPlaylist(video, quality);
-    }
-
-    @Override
-    public InputStream getVideo(String videoKey, String quality, String videoFile) {
-        Video video = this.getVideo(videoKey);
-        if (video.getState() != VideoState.ENABLED) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+        if (videoInfoUpdate.getTitle() != null) {
+            video.setTitle(videoInfoUpdate.getTitle());
         }
 
-        return this.storageService.downloadVideo(video, quality, videoFile);
+        if (videoInfoUpdate.getDescription() != null) {
+            video.setDescription(videoInfoUpdate.getDescription());
+        }
+
+        this.videoRepository.save(video);
+
+        return new VideoInfo(video);
     }
 
-    private Video getVideo(String videoKey) {
-        Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
+    private Video getVideo(String videoId) {
+        long id = -1;
+
+        try {
+            id = Long.parseLong(videoId);
+        } catch (Exception exception) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO, exception);
+        }
+
+        Optional<Video> videoOptional = this.videoRepository.getVideo(id);
         return videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
     }
 
@@ -112,7 +119,7 @@ public class VideoServiceImpl implements VideoService {
         try {
             id = Long.parseLong(accountId);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT);
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT, exception);
         }
 
         Optional<Account> accountOptional = this.accountRepository.getAccount(id);

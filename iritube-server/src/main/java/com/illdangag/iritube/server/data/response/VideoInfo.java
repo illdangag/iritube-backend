@@ -6,6 +6,8 @@ import lombok.Getter;
 
 @Getter
 public class VideoInfo {
+    private String id;
+
     private String videoKey;
 
     private String title;
@@ -17,6 +19,7 @@ public class VideoInfo {
     private VideoState state;
 
     public VideoInfo(Video video) {
+        this.id = String.valueOf(video.getId());
         this.videoKey = video.getVideoKey();
         this.title = video.getTitle();
         this.description = video.getDescription();

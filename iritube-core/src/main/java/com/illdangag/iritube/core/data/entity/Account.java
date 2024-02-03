@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.envers.Audited;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -37,4 +38,18 @@ public class Account {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private AccountAuth auth = AccountAuth.ACCOUNT;
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Account)) {
+            return false;
+        }
+
+        return this.id.equals(((Account) object).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
 }
