@@ -1,5 +1,6 @@
 package com.illdangag.iritube.server.data.request;
 
+import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -19,4 +20,7 @@ public class VideoInfoCreate {
     @Size(max = 1000, message = "The description must be less than 1000 characters.")
     @Builder.Default
     private String description = "";
+
+    @Builder.Default
+    private VideoShare share = VideoShare.PUBLIC;
 }

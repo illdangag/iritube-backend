@@ -54,6 +54,7 @@ public class VideoServiceImpl implements VideoService {
                 .title(videoInfoCreate.getTitle())
                 .description(videoInfoCreate.getDescription())
                 .account(account)
+                .share(videoInfoCreate.getShare())
                 .state(VideoState.EMPTY)
                 .build();
         this.videoRepository.save(video);
@@ -82,8 +83,7 @@ public class VideoServiceImpl implements VideoService {
     public VideoInfo updateVideo(Account account, String videoId, VideoInfoUpdate videoInfoUpdate) {
         Video video = this.getVideo(videoId);
 
-        if (!account.equals(video.getAccount())) {
-            // 요청한 계정이 소유한 영상이 아닌 경우
+        if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
             throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
         }
 
@@ -93,6 +93,10 @@ public class VideoServiceImpl implements VideoService {
 
         if (videoInfoUpdate.getDescription() != null) {
             video.setDescription(videoInfoUpdate.getDescription());
+        }
+
+        if (videoInfoUpdate.getShare() != null) {
+            video.setShare(videoInfoUpdate.getShare());
         }
 
         this.videoRepository.save(video);

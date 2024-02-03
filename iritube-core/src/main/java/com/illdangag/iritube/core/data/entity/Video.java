@@ -1,5 +1,6 @@
 package com.illdangag.iritube.core.data.entity;
 
+import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
@@ -54,6 +55,9 @@ public class Video {
     @Enumerated(EnumType.STRING)
     private VideoState state;
 
+    @Enumerated(EnumType.STRING)
+    private VideoShare share;
+
     @OneToOne
     @JoinColumn(name = "raw_video_file_matadata_id")
     private FileMetadata rawVideo;
@@ -66,23 +70,6 @@ public class Video {
     private Double duration = 0D;
 
     private static String createVideoKey() {
-//        return getHashing(UUID.randomUUID().toString());
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
-    }
-
-    private static String getHashing(String text) {
-        MessageDigest messageDigest;
-        try {
-            messageDigest = MessageDigest.getInstance("SHA-256");
-        } catch (Exception exception) {
-            throw new RuntimeException(exception); // TODO
-        }
-        byte[] hashBytes = messageDigest.digest(text.getBytes(StandardCharsets.UTF_8));
-
-        StringBuffer sb = new StringBuffer();
-        for (byte hashByte : hashBytes) {
-            sb.append(String.format("%02x", hashByte));
-        }
-        return sb.toString();
     }
 }
