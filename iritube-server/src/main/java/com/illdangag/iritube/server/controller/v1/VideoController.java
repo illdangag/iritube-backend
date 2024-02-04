@@ -23,7 +23,7 @@ import java.io.InputStream;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/v1/video")
+@RequestMapping(value = "/v1/videos")
 public class VideoController {
     private final VideoService videoService;
 
