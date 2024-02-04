@@ -4,8 +4,10 @@ import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
 import com.illdangag.iritube.server.data.request.VideoInfoUpdate;
 import com.illdangag.iritube.server.data.response.VideoInfo;
+import com.illdangag.iritube.server.data.response.VideoInfoList;
 
 import java.io.InputStream;
+import java.util.List;
 
 public interface VideoService {
     /**
@@ -23,6 +25,13 @@ public interface VideoService {
     VideoInfo getVideoInfo(String accountId, String videoKey);
 
     VideoInfo getVideoInfo(Account account, String videoKey);
+
+    /**
+     * 동영상 목록 조회
+     */
+    VideoInfoList getVideoInfoList(String accountId, int offset, int limit);
+
+    VideoInfoList getVideoInfoList(Account account, int offset, int limit);
 
     /**
      * 동영상 정보 수정

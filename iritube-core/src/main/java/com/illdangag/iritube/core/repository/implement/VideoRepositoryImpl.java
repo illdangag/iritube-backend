@@ -1,5 +1,6 @@
 package com.illdangag.iritube.core.repository.implement;
 
+import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.VideoTag;
 import com.illdangag.iritube.core.repository.VideoRepository;
@@ -10,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -47,6 +49,28 @@ public class VideoRepositoryImpl implements VideoRepository {
         } catch (Exception exception) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<Video> getVideoList(Account account, int offset, int limit) {
+        String jpql = "SELECT v FROM Video v WHERE v.account = :account AND v.deleted = false";
+
+        TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
+                .setParameter("account", account)
+                .setFirstResult(offset)
+                .setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public long getVideoListCount(Account account) {
+        String jpql = "SELECT COUNT(1) FROM Video v WHERE v.account = :account AND v.deleted = false";
+
+        TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
+                .setParameter("account", account);
+
+        return query.getSingleResult();
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
 import com.illdangag.iritube.server.data.request.VideoInfoUpdate;
 import com.illdangag.iritube.server.data.response.VideoInfo;
+import com.illdangag.iritube.server.data.response.VideoInfoList;
 import com.illdangag.iritube.server.message.service.MessageQueueService;
 import com.illdangag.iritube.server.service.VideoService;
 import com.illdangag.iritube.storage.StorageService;
@@ -111,6 +112,29 @@ public class VideoServiceImpl implements VideoService {
         }
 
         return new VideoInfo(video);
+    }
+
+    @Override
+    public VideoInfoList getVideoInfoList(String accountId, int offset, int limit) {
+        Account account = this.getAccount(accountId);
+        return this.getVideoInfoList(account, offset, limit);
+    }
+
+    @Override
+    public VideoInfoList getVideoInfoList(Account account, int offset, int limit) {
+        List<Video> videoList = this.videoRepository.getVideoList(account, offset, limit);
+        long count = this.videoRepository.getVideoListCount(account);
+
+        List<VideoInfo> videoInfoList = videoList.stream()
+                .map(VideoInfo::new)
+                .collect(Collectors.toList());
+
+        return VideoInfoList.builder()
+                .offset(offset)
+                .limit(limit)
+                .total(count)
+                .videoInfoList(videoInfoList)
+                .build();
     }
 
     @Override
