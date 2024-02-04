@@ -66,54 +66,55 @@ public class FirebaseAuthInterceptor implements HandlerInterceptor {
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
 
+        Account account = null;
+
+        Optional<FirebaseToken> firebaseTokenOptional = this.getFirebaseToken(request);
+        if (firebaseTokenOptional.isPresent()) { // firebase token이 존재하는 경우
+            FirebaseToken firebaseToken = firebaseTokenOptional.get();
+            String firebaseUid = firebaseToken.getUid();
+            String email = firebaseToken.getEmail();
+
+            Optional<FirebaseAuthentication> firebaseAuthenticationOptional = this.firebaseAuthenticationRepository.getFirebaseAuthentication(firebaseUid);
+            if (firebaseAuthenticationOptional.isEmpty()) { // 이전에 로그인한 적이 없는 계정
+                account = Account.builder()
+                        .nickname(email)
+                        .build();
+                this.accountRepository.save(account);
+                FirebaseAuthentication firebaseAuthentication = FirebaseAuthentication.builder()
+                        .id(firebaseUid)
+                        .account(account)
+                        .build();
+                this.firebaseAuthenticationRepository.save(firebaseAuthentication);
+            } else {
+                FirebaseAuthentication firebaseAuthentication = firebaseAuthenticationOptional.get();
+                account = firebaseAuthentication.getAccount();
+            }
+
+            request.setAttribute("account", account); // 계정 정보를 api endpoint로 전달
+        }
+
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         IritubeAuthorization iritubeAuthorization = handlerMethod.getMethodAnnotation(IritubeAuthorization.class);
 
-        if (iritubeAuthorization == null) {
+        if (iritubeAuthorization == null) { // 권한 annotation이 설정 되어 있지 않은 경우
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
 
         IritubeAuthorizationType[] authorizationTypes = iritubeAuthorization.type();
-        List<IritubeAuthorizationType> authorizationTypeList = authorizationTypes == null ? Collections.emptyList()
-                : Arrays.asList(authorizationTypes);
+        List<IritubeAuthorizationType> authorizationTypeList = authorizationTypes == null ? Collections.emptyList() : Arrays.asList(authorizationTypes);
 
-        if (authorizationTypeList.isEmpty()
-                || authorizationTypeList.contains(IritubeAuthorizationType.NONE)) {
+        if (authorizationTypeList.isEmpty() || authorizationTypeList.contains(IritubeAuthorizationType.NONE)) { // 설정된 권한 목록이 존재하지 않거나, 권한이 팔요하지 않은 경우
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
 
-        Optional<FirebaseToken> firebaseTokenOptional = this.getFirebaseToken(request);
         if (firebaseTokenOptional.isEmpty()) {
             throw new IritubeException(IritubeFirebaseError.NOT_EXIST_FIREBASE_ID_TOKEN);
         }
 
-        FirebaseToken firebaseToken = firebaseTokenOptional.get();
-        String firebaseUid = firebaseToken.getUid();
-        String email = firebaseToken.getEmail();
-
-        Optional<FirebaseAuthentication> firebaseAuthenticationOptional = this.firebaseAuthenticationRepository.getFirebaseAuthentication(firebaseUid);
-        Account account;
-        if (firebaseAuthenticationOptional.isEmpty()) { // 이전에 로그인한 적이 없는 계정
-            account = Account.builder()
-                    .nickname(email)
-                    .build();
-            this.accountRepository.save(account);
-            FirebaseAuthentication firebaseAuthentication = FirebaseAuthentication.builder()
-                    .id(firebaseUid)
-                    .account(account)
-                    .build();
-            this.firebaseAuthenticationRepository.save(firebaseAuthentication);
-        } else {
-            FirebaseAuthentication firebaseAuthentication = firebaseAuthenticationOptional.get();
-            account = firebaseAuthentication.getAccount();
-        }
-
-        if (authorizationTypeList.contains(IritubeAuthorizationType.SYSTEM_ADMIN)
-                && !account.getAuth().equals(AccountAuth.SYSTEM_ADMIN)) {
+        if (authorizationTypeList.contains(IritubeAuthorizationType.SYSTEM_ADMIN) && !account.getAuth().equals(AccountAuth.SYSTEM_ADMIN)) { // 관리자 권한이 필요하지만 계정이 관리자가 아닌 경우
             throw new IritubeException(IritubeCoreError.INVALID_AUTHORIZATION);
         }
 
-        request.setAttribute("account", account); // 계정 정보를 api endpoint로 전달
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 

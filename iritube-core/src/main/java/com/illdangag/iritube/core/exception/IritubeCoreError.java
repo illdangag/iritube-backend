@@ -18,6 +18,8 @@ import lombok.Getter;
 public enum IritubeCoreError implements IritubeError {
     // 요청 오류
     INVALID_REQUEST("00000001", 400, "Invalid request."),
+    NOT_FOUNT("00000002", 404, "Not found."),
+    NOT_SUPPORTED_METHOD("00000003", 405, "Not supported method."),
 
     // 인증 오류
     INVALID_AUTHORIZATION("01000000", 401, "Invalid authorization."),

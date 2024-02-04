@@ -8,21 +8,33 @@ import com.illdangag.iritube.server.data.response.VideoInfo;
 import java.io.InputStream;
 
 public interface VideoService {
-    VideoInfo uploadVideo(String accountId, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
+    /**
+     * 동영상 업로드
+     */
+    VideoInfo uploadVideoInfo(String accountId, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
 
-    VideoInfo uploadVideo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
+    VideoInfo uploadVideoInfo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream);
 
-    VideoInfo getVideoByVideoKey(String videoKey);
+    /**
+     * 동영상 정보 조회
+     */
+    VideoInfo getVideoInfo(String videoKey);
 
-    VideoInfo getVideoByVideoKey(String accountId, String videoKey);
+    VideoInfo getVideoInfo(String accountId, String videoKey);
 
-    VideoInfo getVideoByVideoKey(Account account, String videoKey);
+    VideoInfo getVideoInfo(Account account, String videoKey);
 
-    VideoInfo updateVideo(String accountId, String videoId, VideoInfoUpdate videoInfoUpdate);
+    /**
+     * 동영상 정보 수정
+     */
+    VideoInfo updateVideoInfo(String accountId, String videoKey, VideoInfoUpdate videoInfoUpdate);
 
-    VideoInfo updateVideo(Account account, String videoId, VideoInfoUpdate videoInfoUpdate);
+    VideoInfo updateVideoInfo(Account account, String videoKey, VideoInfoUpdate videoInfoUpdate);
 
-    VideoInfo deleteVideo(String accountId, String videoId);
+    /**
+     * 동영상 삭제
+     */
+    VideoInfo deleteVideoInfo(String accountId, String videoKey);
 
-    VideoInfo deleteVideo(Account account, String videoId);
+    VideoInfo deleteVideoInfo(Account account, String videoKey);
 }

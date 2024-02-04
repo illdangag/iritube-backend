@@ -9,14 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Set;
 
 @Slf4j
-@RestControllerAdvice("com.illdangag.iritube.server.controller")
+@RestControllerAdvice
 public class ControllerExceptionAdvice {
 
     /**
@@ -43,7 +46,9 @@ public class ControllerExceptionAdvice {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(IritubeCoreError.INVALID_REQUEST.getCode())
-                .message(message).build();
+                .message(message)
+                .build();
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorResponse);
@@ -65,8 +70,38 @@ public class ControllerExceptionAdvice {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(IritubeCoreError.INVALID_REQUEST.getCode())
-                .message(message).build();
+                .message(message)
+                .build();
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
+    public ResponseEntity<ErrorResponse> notFountException(Exception exception) {
+        log.error("Not found", exception);
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(IritubeCoreError.NOT_FOUNT.getCode())
+                .message(IritubeCoreError.NOT_FOUNT.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    public ResponseEntity<ErrorResponse> notSupportedMethod(Exception exception) {
+        log.error("Not supported method", exception);
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(IritubeCoreError.NOT_SUPPORTED_METHOD.getCode())
+                .message(IritubeCoreError.NOT_SUPPORTED_METHOD.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorResponse);
     }

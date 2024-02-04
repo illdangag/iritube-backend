@@ -27,6 +27,7 @@ public class VideoTag {
     @ManyToOne
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "video_id")
+    @JoinColumn(name = "video_key")
     private Video video;
 
     @Builder.Default

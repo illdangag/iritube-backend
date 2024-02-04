@@ -22,10 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,13 +47,13 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public VideoInfo uploadVideo(String accountId, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream) {
+    public VideoInfo uploadVideoInfo(String accountId, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream) {
         Account account = this.getAccount(accountId);
-        return this.uploadVideo(account, videoInfoCreate, fileName, inputStream);
+        return this.uploadVideoInfo(account, videoInfoCreate, fileName, inputStream);
     }
 
     @Override
-    public VideoInfo uploadVideo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream) {
+    public VideoInfo uploadVideoInfo(Account account, VideoInfoCreate videoInfoCreate, String fileName, InputStream inputStream) {
         Video video = Video.builder()
                 .title(videoInfoCreate.getTitle())
                 .description(videoInfoCreate.getDescription())
@@ -93,25 +91,18 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public VideoInfo getVideoByVideoKey(String videoKey) {
-        Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
-        Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
-
-        if (video.getShare() == VideoShare.PRIVATE ) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
-        }
-
-        return new VideoInfo(video);
+    public VideoInfo getVideoInfo(String videoKey) {
+        return this.getVideoInfo((Account) null, videoKey);
     }
 
     @Override
-    public VideoInfo getVideoByVideoKey(String accountId, String videoKey) {
+    public VideoInfo getVideoInfo(String accountId, String videoKey) {
         Account account = this.getAccount(accountId);
-        return this.getVideoByVideoKey(account, videoKey);
+        return this.getVideoInfo(account, videoKey);
     }
 
     @Override
-    public VideoInfo getVideoByVideoKey(Account account, String videoKey) {
+    public VideoInfo getVideoInfo(Account account, String videoKey) {
         Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
         Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
 
@@ -123,14 +114,14 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public VideoInfo updateVideo(String accountId, String videoId, VideoInfoUpdate videoInfoUpdate) {
+    public VideoInfo updateVideoInfo(String accountId, String videoId, VideoInfoUpdate videoInfoUpdate) {
         Account account = this.getAccount(accountId);
-        return this.updateVideo(account, videoId, videoInfoUpdate);
+        return this.updateVideoInfo(account, videoId, videoInfoUpdate);
     }
 
     @Override
-    public VideoInfo updateVideo(Account account, String videoId, VideoInfoUpdate videoInfoUpdate) {
-        Video video = this.getVideo(videoId);
+    public VideoInfo updateVideoInfo(Account account, String videoKey, VideoInfoUpdate videoInfoUpdate) {
+        Video video = this.getVideo(videoKey);
 
         if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
             throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
@@ -178,13 +169,13 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public VideoInfo deleteVideo(String accountId, String videoId) {
+    public VideoInfo deleteVideoInfo(String accountId, String videoId) {
         Account account = this.getAccount(accountId);
-        return this.deleteVideo(account, videoId);
+        return this.deleteVideoInfo(account, videoId);
     }
 
     @Override
-    public VideoInfo deleteVideo(Account account, String videoId) {
+    public VideoInfo deleteVideoInfo(Account account, String videoId) {
         Video video = this.getVideo(videoId);
 
         if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
@@ -196,16 +187,8 @@ public class VideoServiceImpl implements VideoService {
         return new VideoInfo(video);
     }
 
-    private Video getVideo(String videoId) {
-        long id = -1;
-
-        try {
-            id = Long.parseLong(videoId);
-        } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO, exception);
-        }
-
-        Optional<Video> videoOptional = this.videoRepository.getVideo(id);
+    private Video getVideo(String videoKey) {
+        Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
         return videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
     }
 

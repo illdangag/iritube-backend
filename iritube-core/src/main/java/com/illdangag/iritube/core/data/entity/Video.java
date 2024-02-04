@@ -24,10 +24,16 @@ import java.util.UUID;
         name = "video",
         indexes = {}
 )
+@IdClass(VideoID.class)
 public class Video {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Builder.Default
+    @NotNull
+    @NotBlank
+    private String videoKey = createVideoKey();
 
     @Builder.Default
     @CreationTimestamp
@@ -36,11 +42,6 @@ public class Video {
     @ManyToOne
     @JoinColumn(name = "acount_id")
     private Account account;
-
-    @Builder.Default
-    @NotNull
-    @NotBlank
-    private String videoKey = createVideoKey();
 
     @Builder.Default
     @Size(max = 100)
