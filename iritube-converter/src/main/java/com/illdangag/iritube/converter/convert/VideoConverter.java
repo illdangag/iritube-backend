@@ -117,13 +117,13 @@ public class VideoConverter {
                         .addExtraArgs("-map", "0:a")
                         .addExtraArgs("-map", "0:v")
                         .addExtraArgs("-map", "0:a")
-                        .addExtraArgs("-var_stream_map", "v:0,a:0,name:1080 v:1,a:1,name:720 v:2,a:2,name:480");
+                        .addExtraArgs("-var_stream_map", "v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p");
             } else {
                 outputBuilder
                         .addExtraArgs("-map", "0:v")
                         .addExtraArgs("-map", "0:v")
                         .addExtraArgs("-map", "0:v")
-                        .addExtraArgs("-var_stream_map", "v:0,name:1080 v:1,name:720 v:2,name:480");
+                        .addExtraArgs("-var_stream_map", "v:0,name:1080p v:1,name:720p v:2,name:480p");
             }
 
             outputBuilder
@@ -175,12 +175,12 @@ public class VideoConverter {
                         .addExtraArgs("-map", "0:a")
                         .addExtraArgs("-map", "0:v")
                         .addExtraArgs("-map", "0:a")
-                        .addExtraArgs("-var_stream_map", "v:0,a:0,name:720 v:1,a:1,name:480");
+                        .addExtraArgs("-var_stream_map", "v:0,a:0,name:720p v:1,a:1,name:480p");
             } else {
                 outputBuilder
                         .addExtraArgs("-map", "0:v")
                         .addExtraArgs("-map", "0:v")
-                        .addExtraArgs("-var_stream_map", "v:0,name:720 v:1,name:480");
+                        .addExtraArgs("-var_stream_map", "v:0,name:720p v:1,name:480p");
             }
             outputBuilder
                     .addExtraArgs("-b:v:0", "2500k") // 720P
@@ -215,7 +215,7 @@ public class VideoConverter {
                 outputBuilder
                         .addExtraArgs("-map", "0:v")
                         .addExtraArgs("-map", "0:a")
-                        .addExtraArgs("-var_stream_map", "v:0,a:0,name:480");
+                        .addExtraArgs("-var_stream_map", "v:0,a:0,name:480p");
             } else {
                 outputBuilder
                         .addExtraArgs("-map", "0:v")
