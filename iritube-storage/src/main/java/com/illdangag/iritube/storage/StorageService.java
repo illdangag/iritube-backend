@@ -17,6 +17,8 @@ public interface StorageService {
 
     FileMetadata uploadHLSDirectory(Video video, File hlsDirectory);
 
+    FileMetadata uploadThumbnail(Video video, String fileName, InputStream inputStream);
+
     InputStream downloadVideoHlsMaster(Video video);
 
     InputStream downloadVideoPlaylist(Video video, String quality);
@@ -38,8 +40,7 @@ public interface StorageService {
         return switch (fileMetadata.getType()) {
             case RAW_VIDEO -> path + "/RAW_VIDEO";
             case HLS_DIRECTORY -> path + "/hls";
-            case THUMBNAIL -> path + "/thumbnail";
-            default -> ""; // TODO
+            case THUMBNAIL -> path + "/thumbnail/" + fileMetadata.getOriginName();
         };
     }
 }

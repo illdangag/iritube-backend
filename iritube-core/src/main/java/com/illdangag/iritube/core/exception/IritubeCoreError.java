@@ -30,6 +30,7 @@ public enum IritubeCoreError implements IritubeError {
     // 영상 오류
     INVALID_VIDEO_FILE("03000000", 400, "Invalid video file."),
     NOT_EXIST_VIDEO("03000001", 404, "Not exist video."),
+    INVALID_VIDEO_THUMBNAIL("", 400, "Invalid video thumbnail."),
 
     // 스트림 오류
     NOT_EXIST_HLS_VIDEO("04000000", 404, "Not exist video."),

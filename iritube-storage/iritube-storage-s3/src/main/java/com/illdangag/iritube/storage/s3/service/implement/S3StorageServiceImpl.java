@@ -107,6 +107,36 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public FileMetadata uploadThumbnail(Video video, String fileName, InputStream inputStream) {
+        long size = -1;
+
+        try {
+            size = inputStream.available();
+        } catch (Exception exception) {
+            throw new IritubeException(IritubeCoreError.INVALID_VIDEO_THUMBNAIL);
+        }
+
+        FileMetadata fileMetadata = FileMetadata.builder()
+                .account(video.getAccount())
+                .originName(fileName)
+                .size(size)
+                .type(FileType.THUMBNAIL)
+                .video(video)
+                .build();
+
+        String key = this.getPath(video, fileMetadata);
+
+        AmazonS3 amazonS3 = this.getAmazonS3();
+        try {
+            this.uploadFile(amazonS3, key, inputStream);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception); // TODO
+        }
+
+        return fileMetadata;
+    }
+
+    @Override
     public FileMetadata uploadHLSDirectory(Video video, File hlsDirectory) {
         AmazonS3 amazonS3 = this.getAmazonS3();
 

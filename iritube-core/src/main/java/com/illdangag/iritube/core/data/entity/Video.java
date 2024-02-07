@@ -65,9 +65,7 @@ public class Video {
     @JoinColumn(name = "hls_video_file_matadata_id")
     private FileMetadata hlsVideo;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "video", fetch = FetchType.LAZY)
-    private List<FileMetadata> thumbnailList = new ArrayList<>();
+    // TODO thumbnail entity 생성
 
     @Builder.Default
     private Double duration = 0D;

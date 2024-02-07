@@ -3,12 +3,14 @@ package com.illdangag.iritube.converter.message.kafka.service.implement;
 import com.illdangag.iritube.converter.message.event.VideoEncodeEventListener;
 import com.illdangag.iritube.converter.message.service.MessageQueueService;
 import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+@Transactional
 @Slf4j
 @Service
 public class KafkaServiceImpl implements MessageQueueService {

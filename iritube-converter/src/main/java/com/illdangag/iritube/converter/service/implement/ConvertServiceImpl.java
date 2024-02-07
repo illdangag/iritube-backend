@@ -13,6 +13,7 @@ import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.core.repository.FileMetadataRepository;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.storage.StorageService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
+@Transactional
 @Slf4j
 @Service
 public class ConvertServiceImpl implements ConvertService {
@@ -64,7 +66,11 @@ public class ConvertServiceImpl implements ConvertService {
         });
     }
 
-    private void encodeHLS(VideoEncodeEvent videoEncodeEvent) throws IritubeConvertException, IOException {
+    /**
+     * 동영상 인코딩
+     */
+    @Transactional
+    public void encodeHLS(VideoEncodeEvent videoEncodeEvent) throws IritubeConvertException, IOException {
         String videoId = videoEncodeEvent.getVideoId();
 
         Optional<Video> videoOptional = this.videoRepository.getVideo(Long.parseLong(videoId));
