@@ -14,10 +14,13 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import org.apache.commons.io.FileUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -31,6 +34,7 @@ public class VideoConverter {
 
     private File videoFile;
     private File videoHLSDirectory;
+    private List<File> videoThumbnailList = new ArrayList<>();
 
     public VideoConverter(String ffmpegPath, String ffprobePath, String tempDirectory, InputStream videoFileInputStream) throws IOException {
         this.ffmpeg = new FFmpeg(ffmpegPath);
@@ -86,6 +90,44 @@ public class VideoConverter {
                 .build();
     }
 
+    /**
+     * 동영상 thumbnail 추출
+     */
+    public InputStream createThumbnail() throws IritubeConvertException {
+        File videoFile = this.getVideoFile();
+
+        String thumbnailFilePath = this.tempDirectory + File.separator + UUID.randomUUID().toString() + ".png";
+
+        FFmpegBuilder builder = new FFmpegBuilder()
+                .overrideOutputFiles(true)
+                .setInput(videoFile.getAbsolutePath())
+                .addExtraArgs("-ss", "00:00:01")
+                .addOutput(thumbnailFilePath)
+                .setFrames(1)
+                .done();
+
+        FFmpegExecutor fFmpegExecutor = new FFmpegExecutor(ffmpeg, ffprobe);
+        fFmpegExecutor.createJob(builder).run();
+
+        File thumbnailFile = new File(thumbnailFilePath);
+        thumbnailFile.deleteOnExit();
+        this.videoThumbnailList.add(thumbnailFile);
+
+        ByteArrayInputStream inputStream;
+        try {
+            inputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(thumbnailFile));
+        } catch (Exception exception) {
+            throw new IritubeConvertException(IritubeConverterError.FAIL_TO_CREATE_VIDEO_THUMBNAIL, exception);
+        }
+
+        return inputStream;
+    }
+
+    /**
+     * HLS 동영상 변환
+     *
+     * @return 변환된 HLS 파일 목록의 디렉토리
+     */
     public File createHls() throws IritubeConvertException {
         this.videoHLSDirectory = this.createVideoHLSDirectory();
         VideoMetadata videoMetadata = this.getVideoMetadata();
@@ -300,10 +342,16 @@ public class VideoConverter {
                 FileUtils.cleanDirectory(this.videoHLSDirectory);
                 isDelete = Files.deleteIfExists(this.videoHLSDirectory.toPath());
                 if (isDelete) {
-                    log.info("delete temp video hls file. directory: {}", this.videoFile.getAbsolutePath());
+                    log.info("delete temp video hls file. directory: {}", this.videoHLSDirectory.getAbsolutePath());
                 }
             }
 
+            for (File thumbnailFile : this.videoThumbnailList) {
+                isDelete = Files.deleteIfExists(thumbnailFile.toPath());
+                if (isDelete) {
+                    log.info("delete video thumbnail file. file: {}", thumbnailFile.getAbsolutePath());
+                }
+            }
         } catch (Exception exception) {
             throw new IritubeConvertException(IritubeConverterError.FAIL_TO_DELETE_VIDEO_TEMP_FILE, exception);
         }

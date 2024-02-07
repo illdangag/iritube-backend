@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 @Slf4j
 public class VideoConverterTest {
@@ -16,11 +17,22 @@ public class VideoConverterTest {
     private final String OUTPUT_PATH = "";
 
     @Test
-    void test00() throws Exception {
+    void hls00() throws Exception {
         File videoFile = new File(VIDEO_PATH);
         FileInputStream fileInputStream = new FileInputStream(videoFile);
         VideoConverter videoConverter = new VideoConverter(FFMPEG_PATH, FFPROBE_PATH, OUTPUT_PATH, fileInputStream);
         File hlsDirectory = videoConverter.createHls();
         log.info("hls: {}", hlsDirectory.getAbsolutePath());
+        videoConverter.clear();
+    }
+
+    @Test
+    void thumbnail00() throws Exception {
+        File videoFile = new File(VIDEO_PATH);
+        FileInputStream fileInputStream = new FileInputStream(videoFile);
+        VideoConverter videoConverter = new VideoConverter(FFMPEG_PATH, FFPROBE_PATH, OUTPUT_PATH, fileInputStream);
+        InputStream inputStream = videoConverter.createThumbnail();
+        log.info("thumbnail: {}", inputStream.available());
+        videoConverter.clear();
     }
 }

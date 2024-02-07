@@ -13,6 +13,7 @@ public enum IritubeConverterError implements IritubeError {
     FAIL_TO_READ_VIDEO_METADATA("00000003", 500, "Fail to read video metadata."),
     NOT_EXIST_VIDEO("00000004", 500, "Not exist video."),
     FAIL_TO_CREATE_HLS_TEMP_DIRECTORY("00000005", 500, "Fail to create hls temp directory."),
+    FAIL_TO_CREATE_VIDEO_THUMBNAIL("00000006", 500, "Fail to create video thumbnail."),
     ;
 
     private final String code;
