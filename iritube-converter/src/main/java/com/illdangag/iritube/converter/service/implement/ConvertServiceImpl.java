@@ -75,13 +75,13 @@ public class ConvertServiceImpl implements ConvertService {
         InputStream rawVideoFileInputStream = this.storageService.downloadRawVideo(video);
 
         VideoConverter videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
-        VideoMetadata videoMetadata = videoConverter.getVideoMetadata();
+        VideoMetadata videoMetadata = videoConverter.getVideoMetadata(); // TODO 동영상 변환 오류 처리
 
         video.setState(VideoState.ENCODING);
         video.setDuration(videoMetadata.getDuration());
         this.videoRepository.save(video);
 
-        File hlsDirectory = videoConverter.createHls();
+        File hlsDirectory = videoConverter.createHls(); // TODO 동영상 변환 오류 처리
         FileMetadata hlsDirectoryFileMetadata = this.storageService.uploadHLSDirectory(video, hlsDirectory);
         this.fileMetadataRepository.save(hlsDirectoryFileMetadata);
 

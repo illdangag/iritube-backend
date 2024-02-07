@@ -42,4 +42,9 @@ public class FileMetadata {
     private UUID fileId = UUID.randomUUID();
 
     private Long size;
+
+    @ManyToOne
+    @JoinColumn(name = "video_id")
+    @JoinColumn(name = "video_key")
+    private Video video;
 }

@@ -66,6 +66,10 @@ public class Video {
     private FileMetadata hlsVideo;
 
     @Builder.Default
+    @OneToMany(mappedBy = "video", fetch = FetchType.LAZY)
+    private List<FileMetadata> thumbnailList = new ArrayList<>();
+
+    @Builder.Default
     private Double duration = 0D;
 
     @Builder.Default
