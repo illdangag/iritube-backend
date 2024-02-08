@@ -69,7 +69,6 @@ public class ConvertServiceImpl implements ConvertService {
     /**
      * 동영상 인코딩
      */
-    @Transactional
     public void encodeHLS(VideoEncodeEvent videoEncodeEvent) throws IritubeConvertException, IOException {
         String videoId = videoEncodeEvent.getVideoId();
 
@@ -90,6 +89,11 @@ public class ConvertServiceImpl implements ConvertService {
         File hlsDirectory = videoConverter.createHls(); // TODO 동영상 변환 오류 처리
         FileMetadata hlsDirectoryFileMetadata = this.storageService.uploadHLSDirectory(video, hlsDirectory);
         this.fileMetadataRepository.save(hlsDirectoryFileMetadata);
+
+        InputStream inputStream = videoConverter.createThumbnail(); // TODO 동영상 썸네일 추출 오류 처리
+        FileMetadata thumbnailFileMetadata = this.storageService.uploadThumbnail(video, "thumbnail_00.jpg", inputStream);
+        this.fileMetadataRepository.save(thumbnailFileMetadata);
+        video.setThumbnail(thumbnailFileMetadata);
 
         video.setState(VideoState.ENABLED);
         video.setHlsVideo(hlsDirectoryFileMetadata);

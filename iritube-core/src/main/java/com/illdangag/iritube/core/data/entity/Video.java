@@ -40,7 +40,7 @@ public class Video {
     private LocalDateTime createDate = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "acount_id")
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @Builder.Default
@@ -58,14 +58,16 @@ public class Video {
     private VideoShare share;
 
     @OneToOne
-    @JoinColumn(name = "raw_video_file_matadata_id")
+    @JoinColumn(name = "raw_video_file_metadata_id")
     private FileMetadata rawVideo;
 
     @OneToOne
-    @JoinColumn(name = "hls_video_file_matadata_id")
+    @JoinColumn(name = "hls_video_file_metadata_id")
     private FileMetadata hlsVideo;
 
-    // TODO thumbnail entity 생성
+    @OneToOne
+    @JoinColumn(name = "thumbnail_file_metadata_id")
+    private FileMetadata thumbnail;
 
     @Builder.Default
     private Double duration = 0D;

@@ -77,7 +77,6 @@ public class S3StorageServiceImpl implements StorageService {
                 .originName(fileName)
                 .size(size)
                 .type(FileType.RAW_VIDEO)
-                .video(video)
                 .build();
 
         String key = this.getPath(video, fileMetadata);
@@ -121,7 +120,6 @@ public class S3StorageServiceImpl implements StorageService {
                 .originName(fileName)
                 .size(size)
                 .type(FileType.THUMBNAIL)
-                .video(video)
                 .build();
 
         String key = this.getPath(video, fileMetadata);
@@ -144,7 +142,6 @@ public class S3StorageServiceImpl implements StorageService {
                 .account(video.getAccount())
                 .type(FileType.HLS_DIRECTORY)
                 .size(0L)
-                .video(video)
                 .build();
         String hlsPath = this.getPath(video, hlsDirectoryFileMetadata);
         String baseHlsDirectoryPath = hlsDirectory.getAbsolutePath();
