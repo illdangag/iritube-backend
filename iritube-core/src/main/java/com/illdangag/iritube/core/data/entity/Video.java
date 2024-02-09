@@ -79,6 +79,10 @@ public class Video {
     @Builder.Default
     private Boolean deleted = false;
 
+    @Builder.Default
+    @Column(name = "view_count")
+    private Long viewCount = 0L;
+
     private static String createVideoKey() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     }

@@ -5,6 +5,7 @@ import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.VideoTag;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
+import com.illdangag.iritube.core.util.DateTimeUtils;
 import lombok.Getter;
 
 import java.util.List;
@@ -15,6 +16,10 @@ public class VideoInfo {
     private String id;
 
     private String videoKey;
+
+    private Long createDate;
+
+    private AccountInfo accountInfo;
 
     private String title;
 
@@ -29,9 +34,13 @@ public class VideoInfo {
     @JsonProperty("tags")
     private List<String> tagList;
 
+    private Long viewCount;
+
     public VideoInfo(Video video) {
         this.id = String.valueOf(video.getId());
         this.videoKey = video.getVideoKey();
+        this.createDate = DateTimeUtils.getLong(video.getCreateDate());
+        this.accountInfo = new AccountInfo(video.getAccount());
         this.title = video.getTitle();
         this.description = video.getDescription();
         this.duration = video.getDuration();
@@ -40,5 +49,6 @@ public class VideoInfo {
         this.tagList = video.getVideoTagList().stream()
                 .map(VideoTag::getTag)
                 .collect(Collectors.toList());
+        this.viewCount = video.getViewCount();
     }
 }

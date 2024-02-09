@@ -7,7 +7,6 @@ import com.illdangag.iritube.server.data.response.VideoInfo;
 import com.illdangag.iritube.server.data.response.VideoInfoList;
 
 import java.io.InputStream;
-import java.util.List;
 
 public interface VideoService {
     /**

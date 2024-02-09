@@ -4,6 +4,7 @@ import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.AccountRepository;
+import com.illdangag.iritube.server.data.request.AccountInfoUpdate;
 import com.illdangag.iritube.server.data.response.AccountInfo;
 import com.illdangag.iritube.server.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,23 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountInfo getAccountInfo(Account account) {
+        return new AccountInfo(account);
+    }
+
+    @Override
+    public AccountInfo updateAccountInfo(String accountId, AccountInfoUpdate accountInfoUpdate) {
+        Account account = this.getAccount(accountId);
+        return this.updateAccountInfo(account, accountInfoUpdate);
+    }
+
+    @Override
+    public AccountInfo updateAccountInfo(Account account, AccountInfoUpdate accountInfoUpdate) {
+        if (accountInfoUpdate.getNickname() != null) {
+            account.setNickname(accountInfoUpdate.getNickname());
+        }
+
+        this.accountRepository.save(account);
+
         return new AccountInfo(account);
     }
 
