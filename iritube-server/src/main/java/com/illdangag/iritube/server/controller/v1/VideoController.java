@@ -81,9 +81,9 @@ public class VideoController {
             IritubeAuthorizationType.ACCOUNT
     })
     @RequestMapping(method = RequestMethod.GET, path = "")
-    public ResponseEntity<VideoInfoList> getVideoList(@RequestContext Account account,
-                                                      @RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
-                                                      @RequestParam(name = "limit", defaultValue = "20", required = false) String limitVariable) {
+    public ResponseEntity<VideoInfoList> getVideoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
+                                                      @RequestParam(name = "limit", defaultValue = "20", required = false) String limitVariable,
+                                                      @RequestContext Account account) {
         int offset;
         int limit;
 

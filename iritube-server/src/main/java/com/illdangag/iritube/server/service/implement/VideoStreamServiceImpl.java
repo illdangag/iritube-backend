@@ -31,6 +31,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
 
+        // 조회수 증가
         video.setViewCount(video.getViewCount() + 1);
         this.videoRepository.save(video);
 

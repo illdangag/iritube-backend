@@ -16,6 +16,10 @@ public interface VideoRepository {
 
     long getVideoListCount(Account account);
 
+    List<Video> getVideoList(int offset, int limit);
+
+    long getVideoListCount();
+
     void save(Video video);
 
     void save(VideoTag videoTag);

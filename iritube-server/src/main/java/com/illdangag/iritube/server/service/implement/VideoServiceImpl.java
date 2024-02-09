@@ -123,7 +123,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public VideoInfoList getVideoInfoList(Account account, int offset, int limit) {
         List<Video> videoList = this.videoRepository.getVideoList(account, offset, limit);
-        long count = this.videoRepository.getVideoListCount(account);
+        long total = this.videoRepository.getVideoListCount(account);
 
         List<VideoInfo> videoInfoList = videoList.stream()
                 .map(VideoInfo::new)
@@ -132,7 +132,7 @@ public class VideoServiceImpl implements VideoService {
         return VideoInfoList.builder()
                 .offset(offset)
                 .limit(limit)
-                .total(count)
+                .total(total)
                 .videoInfoList(videoInfoList)
                 .build();
     }

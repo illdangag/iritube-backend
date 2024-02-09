@@ -64,6 +64,26 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
+    public List<Video> getVideoList(int offset, int limit) {
+        String jpql = "SELECT v FROM Video v WHERE v.deleted = false";
+
+        TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public long getVideoListCount() {
+        String jpql = "SELECT COUNT(1) FROM Video v WHERE v.deleted = false";
+
+        TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class);
+
+        return query.getSingleResult();
+    }
+
+    @Override
     public long getVideoListCount(Account account) {
         String jpql = "SELECT COUNT(1) FROM Video v WHERE v.account = :account AND v.deleted = false";
 
