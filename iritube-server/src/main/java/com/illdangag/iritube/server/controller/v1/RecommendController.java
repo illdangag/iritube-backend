@@ -31,7 +31,7 @@ public class RecommendController {
     @IritubeAuthorization(type = {
             IritubeAuthorizationType.NONE
     })
-    @RequestMapping(method = RequestMethod.GET, path = "/video")
+    @RequestMapping(method = RequestMethod.GET, path = "/videos")
     public ResponseEntity<VideoInfoList> getVideoInfoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
                                                           @RequestParam(name = "limit", defaultValue = "20", required = false) String limitVariable,
                                                           @RequestContext Account account) {

@@ -8,4 +8,6 @@ public interface VideoStreamService {
     InputStream getVideoPlaylist(String videoKey, String quality);
 
     InputStream getVideo(String videoKey, String quality, String videoFile);
+
+    InputStream getVideoThumbnail(String videoKey);
 }

@@ -1,6 +1,7 @@
 package com.illdangag.iritube.server.service.implement;
 
 import com.illdangag.iritube.core.data.entity.Video;
+import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
@@ -56,6 +57,16 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         }
 
         return this.storageService.downloadVideo(video, quality, videoFile);
+    }
+
+    @Override
+    public InputStream getVideoThumbnail(String videoKey) {
+        Video video = this.getVideoByVideoKey(videoKey);
+        if (video.getState() != VideoState.ENABLED) {
+            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+        }
+
+        return this.storageService.downloadThumbnail(video);
     }
 
     private Video getVideoByVideoKey(String videoKey) {

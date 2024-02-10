@@ -25,6 +25,8 @@ public interface StorageService {
 
     InputStream downloadVideo(Video video, String quality, String videoFile);
 
+    InputStream downloadThumbnail(Video video);
+
     default String getFileExtension(String filePathName) {
         return FilenameUtils.getExtension(filePathName);
     }

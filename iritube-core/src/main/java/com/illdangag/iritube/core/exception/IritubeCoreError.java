@@ -37,6 +37,7 @@ public enum IritubeCoreError implements IritubeError {
     FAIL_TO_GET_HLS_MASTER_FILE_INPUT_STREAM("04000001", 400, "Invalid video file."),
     FAIL_TO_GET_HLS_PLAYLIST_FILE_INPUT_STREAM("04000002", 400, "Invalid video file."),
     FAIL_TO_GET_HLS_TS_VIDEO_FILE_INPUT_STREAM("04000003", 400, "Invalid video file."),
+    FAIL_TO_GET_THUMBNAIL_FILE_INPUT_STREAM("04000004", 400, "Invalid video file."),
     ;
 
     private final String code;

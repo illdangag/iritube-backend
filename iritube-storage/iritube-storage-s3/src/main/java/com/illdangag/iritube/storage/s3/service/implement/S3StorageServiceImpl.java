@@ -188,6 +188,14 @@ public class S3StorageServiceImpl implements StorageService {
         return this.downloadFile(amazonS3, hlsPath + "/" + quality + "/" + videoFile);
     }
 
+    @Override
+    public InputStream downloadThumbnail(Video video) {
+        AmazonS3 amazonS3 = this.getAmazonS3();
+        FileMetadata thumbnailFileMetadata = video.getThumbnail();
+        String thumbnailPath = this.getPath(video, thumbnailFileMetadata);
+        return this.downloadFile(amazonS3, thumbnailPath);
+    }
+
     private void uploadFile(AmazonS3 amazonS3, String key, InputStream inputStream) throws IOException, SdkClientException, AmazonServiceException {
         long contentLength = inputStream.available();
         ObjectMetadata metadata = new ObjectMetadata();

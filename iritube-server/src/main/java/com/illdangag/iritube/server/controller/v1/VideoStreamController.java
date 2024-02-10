@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/v1/stream")
+@RequestMapping(value = "/v1")
 public class VideoStreamController {
     private final VideoStreamService videoStreamService;
 
@@ -36,7 +36,7 @@ public class VideoStreamController {
      * HLS master
      */
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
-    @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/" + Const.HLS_MASTER_FILE)
+    @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/" + Const.HLS_MASTER_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey) {
         InputStream inputStream = this.videoStreamService.getVideoHlsMaster(videoKey);
         ByteArrayResource resource = null;
@@ -61,7 +61,7 @@ public class VideoStreamController {
      * HLS playlist
      */
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
-    @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
+    @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoKey") String videoKey,
                                                                  @PathVariable(value = "quality") String quality) {
         InputStream inputStream = this.videoStreamService.getVideoPlaylist(videoKey, quality);
@@ -87,7 +87,7 @@ public class VideoStreamController {
      * HLS ts video file
      */
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
-    @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}/{quality}/{tsFileName}")
+    @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/{tsFileName}")
     public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoKey") String videoKey,
                                                               @PathVariable(value = "quality") String quality,
                                                               @PathVariable(value = "tsFileName") String tsFileName) {
@@ -109,6 +109,34 @@ public class VideoStreamController {
                 .headers(getStreamResponseHeader(tsFileName))
                 .body(resource);
     }
+
+    /**
+     * video thumbnail
+     */
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.NONE,
+    })
+    @RequestMapping(method = RequestMethod.GET, path = "/thumbnail/{videoKey}")
+    public ResponseEntity<ByteArrayResource> getVideoThumbnail(@PathVariable(value = "videoKey") String videoKey) {
+        InputStream inputStream = this.videoStreamService.getVideoThumbnail(videoKey);
+        ByteArrayResource resource = null;
+        long contentLength = 0;
+        try {
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            resource = new ByteArrayResource(bytes);
+            contentLength = bytes.length;
+        } catch (Exception exception) {
+            String message = String.format("video: %s", videoKey);
+            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_THUMBNAIL_FILE_INPUT_STREAM, message, exception);
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentLength(contentLength)
+                .headers(getStreamResponseHeader("thumbnail.pngd"))
+                .body(resource);
+    }
+
 
     private HttpHeaders getStreamResponseHeader(String fileName) {
         HttpHeaders httpHeaders = new HttpHeaders();
