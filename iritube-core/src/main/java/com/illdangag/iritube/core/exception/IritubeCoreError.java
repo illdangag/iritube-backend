@@ -26,6 +26,7 @@ public enum IritubeCoreError implements IritubeError {
 
     // 계정 오류
     NOT_EXIST_ACCOUNT("02000000", 404, "Not exist account."),
+    DUPLICATE_ACCOUNT_NICKNAME("", 400, "Duplicate account nickname"),
 
     // 영상 오류
     INVALID_VIDEO_FILE("03000000", 400, "Invalid video file."),

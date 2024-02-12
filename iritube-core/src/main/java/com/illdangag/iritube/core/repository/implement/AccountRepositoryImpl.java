@@ -24,10 +24,24 @@ public class AccountRepositoryImpl implements AccountRepository {
         TypedQuery<Account> query = this.entityManager.createQuery(jpql, Account.class)
                 .setParameter("id", id);
 
-        Account account = query.getSingleResult();
-        if (account != null) {
+        try {
+            Account account = query.getSingleResult();
             return Optional.of(account);
-        } else {
+        } catch (Exception exception) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Account> getAccountByNickname(String nickname) {
+        String jpql = "SELECT a FROM Account a WHERE a.nickname = :nickname";
+        TypedQuery<Account> query = this.entityManager.createQuery(jpql, Account.class)
+                .setParameter("nickname", nickname);
+
+        try {
+            Account account = query.getSingleResult();
+            return Optional.of(account);
+        } catch (Exception exception) {
             return Optional.empty();
         }
     }

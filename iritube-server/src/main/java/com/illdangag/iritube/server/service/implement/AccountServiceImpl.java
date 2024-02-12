@@ -42,7 +42,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountInfo updateAccountInfo(Account account, AccountInfoUpdate accountInfoUpdate) {
         if (accountInfoUpdate.getNickname() != null) {
-            account.setNickname(accountInfoUpdate.getNickname());
+            String nickname = accountInfoUpdate.getNickname().replace(" ", "");
+            Optional<Account> accountOptional = this.accountRepository.getAccountByNickname(nickname);
+
+            if (accountOptional.isPresent() && !accountOptional.get().equals(account)) { // 동일한 닉네임을 가진 계정이 이미 존재
+                throw new IritubeException(IritubeCoreError.DUPLICATE_ACCOUNT_NICKNAME, "nickname: " + nickname);
+            }
+
+            account.setNickname(nickname);
         }
 
         this.accountRepository.save(account);
