@@ -35,7 +35,9 @@ public class VideoStreamController {
     /**
      * HLS master
      */
-    @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.NONE,
+    })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/" + Const.HLS_MASTER_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey) {
         InputStream inputStream = this.videoStreamService.getVideoHlsMaster(videoKey);
@@ -60,7 +62,9 @@ public class VideoStreamController {
     /**
      * HLS playlist
      */
-    @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.NONE,
+    })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoKey") String videoKey,
                                                                  @PathVariable(value = "quality") String quality) {
@@ -86,7 +90,9 @@ public class VideoStreamController {
     /**
      * HLS ts video file
      */
-    @IritubeAuthorization(type = {IritubeAuthorizationType.NONE,})
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.NONE,
+    })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/{tsFileName}")
     public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoKey") String videoKey,
                                                               @PathVariable(value = "quality") String quality,
@@ -136,7 +142,6 @@ public class VideoStreamController {
                 .headers(getStreamResponseHeader("thumbnail.pngd"))
                 .body(resource);
     }
-
 
     private HttpHeaders getStreamResponseHeader(String fileName) {
         HttpHeaders httpHeaders = new HttpHeaders();

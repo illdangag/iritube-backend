@@ -19,6 +19,7 @@ public class VideoInfo {
 
     private Long createDate;
 
+    @JsonProperty("account")
     private AccountInfo accountInfo;
 
     private String title;
