@@ -1,42 +1,38 @@
 package com.illdangag.iritube.server.service.implement;
 
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.AccountRepository;
+import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.server.data.request.AccountInfoUpdate;
+import com.illdangag.iritube.server.data.request.AccountVideoInfoSearch;
 import com.illdangag.iritube.server.data.response.AccountInfo;
+import com.illdangag.iritube.server.data.response.VideoInfo;
+import com.illdangag.iritube.server.data.response.VideoInfoList;
 import com.illdangag.iritube.server.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
+    private final VideoRepository videoRepository;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, VideoRepository videoRepository) {
         this.accountRepository = accountRepository;
-    }
-
-
-    @Override
-    public AccountInfo getAccountInfo(String accountId) {
-        Account account = this.getAccount(accountId);
-        return this.getAccountInfo(account);
+        this.videoRepository = videoRepository;
     }
 
     @Override
     public AccountInfo getAccountInfo(Account account) {
         return new AccountInfo(account);
-    }
-
-    @Override
-    public AccountInfo updateAccountInfo(String accountId, AccountInfoUpdate accountInfoUpdate) {
-        Account account = this.getAccount(accountId);
-        return this.updateAccountInfo(account, accountInfoUpdate);
     }
 
     @Override
@@ -55,6 +51,26 @@ public class AccountServiceImpl implements AccountService {
         this.accountRepository.save(account);
 
         return new AccountInfo(account);
+    }
+
+    @Override
+    public VideoInfoList getVideoInfoList(Account account, AccountVideoInfoSearch accountVideoInfoSearch) {
+        int offset = accountVideoInfoSearch.getOffset();
+        int limit = accountVideoInfoSearch.getLimit();
+
+        List<Video> videoList = this.videoRepository.getVideoList(account, offset, limit);
+        long total = this.videoRepository.getVideoListCount(account);
+
+        List<VideoInfo> videoInfoList = videoList.stream()
+                .map(VideoInfo::new)
+                .toList();
+
+        return VideoInfoList.builder()
+                .videoInfoList(videoInfoList)
+                .offset(offset)
+                .limit(limit)
+                .total(total)
+                .build();
     }
 
     private Account getAccount(String accountId) {

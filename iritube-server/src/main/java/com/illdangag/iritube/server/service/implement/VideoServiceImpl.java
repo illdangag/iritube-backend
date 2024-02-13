@@ -84,7 +84,7 @@ public class VideoServiceImpl implements VideoService {
         this.videoRepository.save(video);
 
         VideoEncodeEvent videoEncodeEvent = VideoEncodeEvent.builder()
-                .videoId(String.valueOf(video.getId()))
+                .videoId(video.getId())
                 .build();
         this.messageQueueService.sendMessage(videoEncodeEvent);
 

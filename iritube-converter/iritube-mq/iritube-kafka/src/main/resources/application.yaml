@@ -13,6 +13,9 @@ spring:
           json:
             trusted:
               packages: com.illdangag.iritube.core.data.message
+      enable-auto-commit: false
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    listener:
+      ack-mode: manual

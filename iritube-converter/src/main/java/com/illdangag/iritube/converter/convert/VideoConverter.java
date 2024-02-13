@@ -32,6 +32,7 @@ public class VideoConverter {
     private final String tempDirectory;
     private final InputStream videoFileInputStream;
 
+    private VideoMetadata videoMetadata = null;
     private File videoFile;
     private File videoHLSDirectory;
     private List<File> videoThumbnailList = new ArrayList<>();
@@ -44,6 +45,10 @@ public class VideoConverter {
     }
 
     public VideoMetadata getVideoMetadata() throws IritubeConvertException {
+        if (this.videoMetadata != null) {
+            return this.videoMetadata;
+        }
+
         File videoFile = this.getVideoFile();
 
         FFmpegProbeResult probeResult;
@@ -81,13 +86,15 @@ public class VideoConverter {
         int width = videoStream.width;
         int height = videoStream.height;
 
-        return VideoMetadata.builder()
+        this.videoMetadata = VideoMetadata.builder()
                 .width(width)
                 .height(height)
                 .duration(probeResult.getFormat().duration)
                 .isContainAudio(containAudio)
                 .isRotate(isRotate)
                 .build();
+
+        return this.videoMetadata;
     }
 
     /**

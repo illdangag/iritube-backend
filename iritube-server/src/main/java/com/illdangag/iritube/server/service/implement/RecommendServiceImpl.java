@@ -41,8 +41,8 @@ public class RecommendServiceImpl implements RecommendService {
 
     @Override
     public VideoInfoList getVideoInfoList(int offset, int limit) {
-        List<Video> videoList = this.videoRepository.getVideoList(offset, limit);
-        long total = this.videoRepository.getVideoListCount();
+        List<Video> videoList = this.videoRepository.getPlayableVideoList(offset, limit);
+        long total = this.videoRepository.getPlayableVideoCount();
 
         List<VideoInfo> videoInfoList = videoList.stream()
                 .map(VideoInfo::new)

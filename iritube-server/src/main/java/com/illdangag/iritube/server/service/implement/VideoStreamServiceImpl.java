@@ -28,7 +28,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     @Override
     public InputStream getVideoHlsMaster(String videoKey) {
         Video video = this.getVideoByVideoKey(videoKey);
-        if (video.getState() != VideoState.ENABLED) {
+        if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
 
@@ -42,7 +42,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     @Override
     public InputStream getVideoPlaylist(String videoKey, String quality) {
         Video video = this.getVideoByVideoKey(videoKey);
-        if (video.getState() != VideoState.ENABLED) {
+        if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
 
@@ -52,7 +52,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     @Override
     public InputStream getVideo(String videoKey, String quality, String videoFile) {
         Video video = this.getVideoByVideoKey(videoKey);
-        if (video.getState() != VideoState.ENABLED) {
+        if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
 
@@ -62,7 +62,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     @Override
     public InputStream getVideoThumbnail(String videoKey) {
         Video video = this.getVideoByVideoKey(videoKey);
-        if (video.getState() != VideoState.ENABLED) {
+        if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
 

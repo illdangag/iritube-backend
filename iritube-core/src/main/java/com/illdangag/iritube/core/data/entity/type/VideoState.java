@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum VideoState {
-    EMPTY,
-    UPLOADED,
-    ENCODING,
-    ENABLED;
+    EMPTY, // 동영상 정보만 생성
+    UPLOADED, // 원본 파일이 업로드 된 상태
+    CONVERTING, // 동영상 변환중
+    CONVERTED, // 동영상 변환 완료
+    FAIL_CONVERT, // 동영상 변환 실패
+    ;
 
     @JsonCreator
     public static VideoState setValue(String key) {

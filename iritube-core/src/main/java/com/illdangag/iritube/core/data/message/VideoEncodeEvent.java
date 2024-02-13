@@ -8,5 +8,5 @@ import lombok.*;
 @Builder
 @ToString
 public class VideoEncodeEvent {
-    private String videoId;
+    private long videoId;
 }

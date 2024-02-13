@@ -6,6 +6,7 @@ import com.illdangag.iritube.core.exception.IritubeException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +68,23 @@ public class ControllerExceptionAdvice {
         } else {
             message = IritubeCoreError.INVALID_REQUEST.getMessage();
         }
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(IritubeCoreError.INVALID_REQUEST.getCode())
+                .message(message)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+    }
+
+    /**
+     * 요청에 대한 유효성 검사 실패
+     */
+    @ExceptionHandler({InvalidDataAccessApiUsageException.class})
+    public ResponseEntity<ErrorResponse> invalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception) {
+        String message = exception.getMessage();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(IritubeCoreError.INVALID_REQUEST.getCode())

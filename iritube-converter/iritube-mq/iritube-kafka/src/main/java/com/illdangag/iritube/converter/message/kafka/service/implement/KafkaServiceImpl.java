@@ -6,6 +6,8 @@ import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.listener.adapter.ConsumerRecordMetadata;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,11 +25,16 @@ public class KafkaServiceImpl implements MessageQueueService {
 
 //    @KafkaListener(topics = "video-encode", groupId = "#{T(java.util.UUID).randomUUID().toString()}")
     @KafkaListener(topics = "video-encode", groupId = "converter-00")
-    public void consume(VideoEncodeEvent videoEncodeEvent) throws IOException {
+    public void consume(VideoEncodeEvent videoEncodeEvent, ConsumerRecordMetadata consumerRecordMetadata, Acknowledgment acknowledgment) throws IOException {
         log.info("consume: {}", videoEncodeEvent.toString());
 
         if (this.videoEncodeEventListener != null) {
-            this.videoEncodeEventListener.eventListener(videoEncodeEvent);
+            try {
+                this.videoEncodeEventListener.eventListener(videoEncodeEvent);
+                acknowledgment.acknowledge(); // kafka topic 응답
+            } catch (Exception exception) {
+                log.error("", exception);
+            }
         }
     }
 }

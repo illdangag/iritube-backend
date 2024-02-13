@@ -3,13 +3,11 @@ package com.illdangag.iritube.converter.service.implement;
 import com.illdangag.iritube.converter.convert.VideoConverter;
 import com.illdangag.iritube.converter.data.VideoMetadata;
 import com.illdangag.iritube.converter.exception.IritubeConvertException;
-import com.illdangag.iritube.converter.exception.IritubeConverterError;
 import com.illdangag.iritube.converter.message.service.MessageQueueService;
 import com.illdangag.iritube.converter.service.ConvertService;
 import com.illdangag.iritube.core.data.entity.FileMetadata;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
-import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
 import com.illdangag.iritube.core.repository.FileMetadataRepository;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.storage.StorageService;
@@ -58,10 +56,23 @@ public class ConvertServiceImpl implements ConvertService {
         this.storageService = storageService;
 
         this.messageQueueService.addVideoEncodeEventListener((videoEncodeEvent) -> {
+            long videoId = videoEncodeEvent.getVideoId();
+
+            Optional<Video> videoOptional = this.videoRepository.getVideo(videoId);
+            if (videoOptional.isEmpty()) {
+                log.error("Video is not exist. video: {}", videoId);
+                return;
+            }
+
+            Video video = videoOptional.get();
+
             try {
-                this.encodeHLS(videoEncodeEvent);
+                this.encodeHLS(video);
             } catch (Exception exception) {
-                log.error("Error encode HLS.", exception);
+                video.setState(VideoState.FAIL_CONVERT);
+                this.videoRepository.save(video);
+
+                log.error("Error encode HLS. video: {}", videoId, exception);
             }
         });
     }
@@ -69,33 +80,26 @@ public class ConvertServiceImpl implements ConvertService {
     /**
      * 동영상 인코딩
      */
-    public void encodeHLS(VideoEncodeEvent videoEncodeEvent) throws IritubeConvertException, IOException {
-        String videoId = videoEncodeEvent.getVideoId();
-
-        Optional<Video> videoOptional = this.videoRepository.getVideo(Long.parseLong(videoId));
-        Video video = videoOptional.orElseThrow(() -> {
-            return new IritubeConvertException(IritubeConverterError.NOT_EXIST_VIDEO, "video: " + videoId);
-        });
-
+    public void encodeHLS(Video video) throws IritubeConvertException, IOException {
         InputStream rawVideoFileInputStream = this.storageService.downloadRawVideo(video);
 
         VideoConverter videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
-        VideoMetadata videoMetadata = videoConverter.getVideoMetadata(); // TODO 동영상 변환 오류 처리
+        VideoMetadata videoMetadata = videoConverter.getVideoMetadata();
 
-        video.setState(VideoState.ENCODING);
+        video.setState(VideoState.CONVERTING);
         video.setDuration(videoMetadata.getDuration());
         this.videoRepository.save(video);
 
-        File hlsDirectory = videoConverter.createHls(); // TODO 동영상 변환 오류 처리
+        File hlsDirectory = videoConverter.createHls();
         FileMetadata hlsDirectoryFileMetadata = this.storageService.uploadHLSDirectory(video, hlsDirectory);
         this.fileMetadataRepository.save(hlsDirectoryFileMetadata);
 
-        InputStream inputStream = videoConverter.createThumbnail(); // TODO 동영상 썸네일 추출 오류 처리
+        InputStream inputStream = videoConverter.createThumbnail();
         FileMetadata thumbnailFileMetadata = this.storageService.uploadThumbnail(video, "thumbnail_00.jpg", inputStream);
         this.fileMetadataRepository.save(thumbnailFileMetadata);
         video.setThumbnail(thumbnailFileMetadata);
 
-        video.setState(VideoState.ENABLED);
+        video.setState(VideoState.CONVERTED);
         video.setHlsVideo(hlsDirectoryFileMetadata);
         this.videoRepository.save(video);
 

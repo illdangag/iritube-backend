@@ -3,6 +3,8 @@ package com.illdangag.iritube.core.repository.implement;
 import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.VideoTag;
+import com.illdangag.iritube.core.data.entity.type.VideoShare;
+import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -64,10 +66,22 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
-    public List<Video> getVideoList(int offset, int limit) {
-        String jpql = "SELECT v FROM Video v WHERE v.deleted = false";
+    public long getVideoListCount(Account account) {
+        String jpql = "SELECT COUNT(1) FROM Video v WHERE v.account = :account AND v.deleted = false";
+
+        TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
+                .setParameter("account", account);
+
+        return query.getSingleResult();
+    }
+
+    @Override
+    public List<Video> getPlayableVideoList(int offset, int limit) {
+        String jpql = "SELECT v FROM Video v WHERE v.deleted = false AND v.share = :share AND v.state = :state";
 
         TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
+                .setParameter("share", VideoShare.PUBLIC)
+                .setParameter("state", VideoState.CONVERTED)
                 .setFirstResult(offset)
                 .setMaxResults(limit);
 
@@ -75,20 +89,12 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
-    public long getVideoListCount() {
-        String jpql = "SELECT COUNT(1) FROM Video v WHERE v.deleted = false";
-
-        TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class);
-
-        return query.getSingleResult();
-    }
-
-    @Override
-    public long getVideoListCount(Account account) {
-        String jpql = "SELECT COUNT(1) FROM Video v WHERE v.account = :account AND v.deleted = false";
+    public long getPlayableVideoCount() {
+        String jpql = "SELECT COUNT(1) FROM Video v WHERE v.deleted = false AND v.share = :share AND v.state = :state";
 
         TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
-                .setParameter("account", account);
+                .setParameter("share", VideoShare.PUBLIC)
+                .setParameter("state", VideoState.CONVERTED);
 
         return query.getSingleResult();
     }
