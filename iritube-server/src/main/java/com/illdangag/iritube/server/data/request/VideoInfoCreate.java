@@ -28,7 +28,7 @@ public class VideoInfoCreate {
     @Builder.Default
     private VideoShare share = VideoShare.PUBLIC;
 
-    @JsonProperty("videoTags")
+    @JsonProperty("tags")
     @Builder.Default
     private List<String> videoTagList = new ArrayList<>();
 }

@@ -23,6 +23,6 @@ public class VideoInfoUpdate {
 
     private VideoShare share;
 
-    @JsonProperty("videoTags")
+    @JsonProperty("tags")
     private List<String> videoTagList;
 }

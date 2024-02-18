@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-@Transactional
 @Slf4j
 @Service
 public class ConvertServiceImpl implements ConvertService {
@@ -35,6 +35,8 @@ public class ConvertServiceImpl implements ConvertService {
     private final MessageQueueService messageQueueService;
     private final StorageService storageService;
 
+    private final ApplicationContext applicationContext;
+
     @Autowired
     public ConvertServiceImpl(@Value("${convert.temp.path:#{null}}") String tempPath,
                               @Value("${convert.ffmpeg.path:#{null}}") String ffmpegPath,
@@ -42,7 +44,8 @@ public class ConvertServiceImpl implements ConvertService {
                               FileMetadataRepository fileMetadataRepository,
                               VideoRepository videoRepository,
                               MessageQueueService messageQueueService,
-                              StorageService storageService) {
+                              StorageService storageService,
+                              ApplicationContext applicationContext) {
         this.TEMP_PATH = tempPath;
         this.FFMPEG_PATH = ffmpegPath;
         this.FFPROBE_PATH = ffprobePath;
@@ -54,6 +57,7 @@ public class ConvertServiceImpl implements ConvertService {
         this.videoRepository = videoRepository;
         this.messageQueueService = messageQueueService;
         this.storageService = storageService;
+        this.applicationContext = applicationContext;
 
         this.messageQueueService.addVideoEncodeEventListener((videoEncodeEvent) -> {
             long videoId = videoEncodeEvent.getVideoId();
@@ -67,7 +71,11 @@ public class ConvertServiceImpl implements ConvertService {
             Video video = videoOptional.get();
 
             try {
-                this.encodeHLS(video);
+                video.setState(VideoState.CONVERTING);
+                this.videoRepository.save(video);
+
+                ConvertService self = applicationContext.getBean(ConvertService.class);
+                self.encodeHLS(video);
             } catch (Exception exception) {
                 video.setState(VideoState.FAIL_CONVERT);
                 this.videoRepository.save(video);
@@ -80,15 +88,15 @@ public class ConvertServiceImpl implements ConvertService {
     /**
      * 동영상 인코딩
      */
+    @Transactional
+    @Override
     public void encodeHLS(Video video) throws IritubeConvertException, IOException {
         InputStream rawVideoFileInputStream = this.storageService.downloadRawVideo(video);
 
         VideoConverter videoConverter = new VideoConverter(this.FFMPEG_PATH, this.FFPROBE_PATH, this.TEMP_PATH, rawVideoFileInputStream);
         VideoMetadata videoMetadata = videoConverter.getVideoMetadata();
 
-        video.setState(VideoState.CONVERTING);
         video.setDuration(videoMetadata.getDuration());
-        this.videoRepository.save(video);
 
         File hlsDirectory = videoConverter.createHls();
         FileMetadata hlsDirectoryFileMetadata = this.storageService.uploadHLSDirectory(video, hlsDirectory);

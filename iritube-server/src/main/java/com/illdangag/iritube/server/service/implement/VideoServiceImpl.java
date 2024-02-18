@@ -23,8 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,6 +64,7 @@ public class VideoServiceImpl implements VideoService {
         this.videoRepository.save(video);
 
         List<VideoTag> videoTagList = videoInfoCreate.getVideoTagList().stream()
+                .map(String::trim)
                 .distinct()
                 .map(tag -> {
                     return VideoTag.builder()
@@ -169,6 +169,8 @@ public class VideoServiceImpl implements VideoService {
         if (videoInfoUpdate.getVideoTagList() != null) {
             List<VideoTag> videoTagList = video.getVideoTagList();
             List<VideoTag> updateVideoTagList = videoInfoUpdate.getVideoTagList().stream()
+                    .map(String::trim)
+                    .distinct()
                     .map(tag -> VideoTag.builder()
                             .video(video)
                             .tag(tag)
