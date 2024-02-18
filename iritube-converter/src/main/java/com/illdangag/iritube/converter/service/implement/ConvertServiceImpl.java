@@ -74,7 +74,7 @@ public class ConvertServiceImpl implements ConvertService {
                 video.setState(VideoState.CONVERTING);
                 this.videoRepository.save(video);
 
-                ConvertService self = applicationContext.getBean(ConvertService.class);
+                ConvertService self = this.applicationContext.getBean(ConvertService.class);
                 self.encodeHLS(video);
             } catch (Exception exception) {
                 video.setState(VideoState.FAIL_CONVERT);
