@@ -1,6 +1,7 @@
 package com.illdangag.iritube.core.repository.implement;
 
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.core.data.entity.PlayList;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.VideoTag;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
@@ -100,6 +101,39 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
+    public Optional<PlayList> getPlayList(String playListKey) {
+        String jpql = "SELECT pl FROM PlayList pl WHERE pl.playListKey = :playListKey";
+
+        TypedQuery<PlayList> query = this.entityManager.createQuery(jpql, PlayList.class)
+                .setParameter("playListKey", playListKey);
+
+        List<PlayList> playListList = query.getResultList();
+
+        if (playListList.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(playListList.get(0));
+        }
+    }
+
+    @Override
+    public Optional<PlayList> getPlayList(Account account, String playListKey) {
+        String jpql = "SELECT pl FROM PlayList pl WHERE pl.playListKey = :playListKey AND pl.account = :account";
+
+        TypedQuery<PlayList> query = this.entityManager.createQuery(jpql, PlayList.class)
+                .setParameter("playListKey", playListKey)
+                .setParameter("account", account);
+
+        List<PlayList> playListList = query.getResultList();
+
+        if (playListList.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(playListList.get(0));
+        }
+    }
+
+    @Override
     public void save(Video video) {
         if (video.getId() != null) {
             this.entityManager.merge(video);
@@ -120,8 +154,24 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
+    public void save(PlayList playList) {
+        if (playList.getId() != null) {
+            this.entityManager.merge(playList);
+        } else {
+            this.entityManager.persist(playList);
+        }
+        this.entityManager.flush();
+    }
+
+    @Override
     public void remove(VideoTag videoTag) {
         this.entityManager.remove(videoTag);
+        this.entityManager.flush();
+    }
+
+    @Override
+    public void remove(PlayList playList) {
+        this.entityManager.remove(playList);
         this.entityManager.flush();
     }
 }

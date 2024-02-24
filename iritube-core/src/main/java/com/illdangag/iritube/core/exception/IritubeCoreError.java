@@ -12,6 +12,7 @@ import lombok.Getter;
  * - 계정 오류: 02******
  * - 영상 오류: 03******
  * - 스트림 오류: 04******
+ * - 재생 목록 오류: 05******
  */
 @AllArgsConstructor
 @Getter
@@ -39,6 +40,9 @@ public enum IritubeCoreError implements IritubeError {
     FAIL_TO_GET_HLS_PLAYLIST_FILE_INPUT_STREAM("04000002", 400, "Invalid video file."),
     FAIL_TO_GET_HLS_TS_VIDEO_FILE_INPUT_STREAM("04000003", 400, "Invalid video file."),
     FAIL_TO_GET_THUMBNAIL_FILE_INPUT_STREAM("04000004", 400, "Invalid video file."),
+
+    // 재생 목록 오류
+    NOT_EXIST_PLAYLIST("05000000", 404, "Not exist play list."),
     ;
 
     private final String code;

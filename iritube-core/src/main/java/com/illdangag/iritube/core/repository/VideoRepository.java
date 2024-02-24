@@ -1,6 +1,7 @@
 package com.illdangag.iritube.core.repository;
 
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.core.data.entity.PlayList;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.VideoTag;
 
@@ -18,11 +19,19 @@ public interface VideoRepository {
 
     List<Video> getPlayableVideoList(int offset, int limit);
 
+    Optional<PlayList> getPlayList(String playListKey);
+
+    Optional<PlayList> getPlayList(Account account, String playListKey);
+
     long getPlayableVideoCount();
 
     void save(Video video);
 
     void save(VideoTag videoTag);
 
+    void save(PlayList playList);
+
     void remove(VideoTag videoTag);
+
+    void remove(PlayList playList);
 }

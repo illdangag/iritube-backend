@@ -15,7 +15,6 @@ public class KafkaServiceImpl implements MessageQueueService {
 
     private final KafkaTemplate kafkaTemplate;
 
-
     @Autowired
     public KafkaServiceImpl(@Value("${spring.kafka.topics.video.convert}") String videoConvertTopic,
                             KafkaTemplate kafkaTemplate) {
