@@ -134,6 +134,28 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
+    public List<PlayList> getPlayListList(Account account, int offset, int limit) {
+        String jpql = "SELECT pl FROM PlayList pl WHERE pl.account = :account";
+
+        TypedQuery<PlayList> query = this.entityManager.createQuery(jpql, PlayList.class)
+                .setParameter("account", account)
+                .setFirstResult(offset)
+                .setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public long getPlayListCount(Account account) {
+        String jpql = "SELECT COUNT(1) FROM PlayList pl WHERE pl.account = :account";
+
+        TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
+                .setParameter("account", account);
+
+        return query.getSingleResult();
+    }
+
+    @Override
     public void save(Video video) {
         if (video.getId() != null) {
             this.entityManager.merge(video);

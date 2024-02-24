@@ -10,6 +10,7 @@ import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.server.data.request.PlayListInfoCreate;
 import com.illdangag.iritube.server.data.request.PlayListInfoUpdate;
 import com.illdangag.iritube.server.data.response.PlayListInfo;
+import com.illdangag.iritube.server.data.response.PlayListInfoList;
 import com.illdangag.iritube.server.data.response.VideoInfo;
 import com.illdangag.iritube.server.service.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,23 @@ public class PlayListServiceImpl implements PlayListService {
                 .toList();
 
         return new PlayListInfo(playList);
+    }
+
+    @Override
+    public PlayListInfoList getPlayListInfoList(Account account, int offset, int limit) {
+        List<PlayList> playListList = this.videoRepository.getPlayListList(account, offset, limit);
+        long total = this.videoRepository.getPlayListCount(account);
+
+        List<PlayListInfo> playListInfoList = playListList.stream()
+                .map(PlayListInfo::new)
+                .toList();
+
+        return PlayListInfoList.builder()
+                .total(total)
+                .offset(offset)
+                .limit(limit)
+                .playListInfoList(playListInfoList)
+                .build();
     }
 
     @Override

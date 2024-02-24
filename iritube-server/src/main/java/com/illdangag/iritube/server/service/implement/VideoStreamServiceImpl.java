@@ -1,7 +1,6 @@
 package com.illdangag.iritube.server.service.implement;
 
 import com.illdangag.iritube.core.data.entity.Video;
-import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;

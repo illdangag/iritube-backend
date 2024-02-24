@@ -25,6 +25,10 @@ public interface VideoRepository {
 
     long getPlayableVideoCount();
 
+    List<PlayList> getPlayListList(Account account, int offset, int limit);
+
+    long getPlayListCount(Account account);
+
     void save(Video video);
 
     void save(VideoTag videoTag);
