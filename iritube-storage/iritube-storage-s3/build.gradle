@@ -35,7 +35,7 @@ dependencies {
 
 checkstyle { // code convention
     ignoreFailures = true
-    configFile = file("../checkstyle.xml")
+    configFile = file("../../checkstyle.xml")
     reportsDir = file("${buildDir}/checkstyle-output")
 }
 

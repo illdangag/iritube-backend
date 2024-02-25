@@ -154,8 +154,7 @@ public class VideoConverter {
                 .addExtraArgs("-master_pl_name", Const.HLS_MASTER_FILE)
                 .addExtraArgs("-c:v", "libx264")
                 .addExtraArgs("-c:a", "aac")
-                .addExtraArgs("-ar", "48000")
-                ;
+                .addExtraArgs("-ar", "48000");
 
         if (height >= 1080) {
             if (isContainAudio) {

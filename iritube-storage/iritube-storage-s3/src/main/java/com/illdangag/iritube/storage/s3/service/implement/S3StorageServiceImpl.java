@@ -156,7 +156,9 @@ public class S3StorageServiceImpl implements StorageService {
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
                 this.uploadFile(amazonS3, key, fileInputStream);
-            } catch (Exception exception) {}
+            } catch (Exception exception) {
+                log.error("Fail to upload HLS Directory. video: {}", video.getId(), exception);
+            }
         }));
 
         hlsDirectoryFileMetadata.setSize(size.get());
