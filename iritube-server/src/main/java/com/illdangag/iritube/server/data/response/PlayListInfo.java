@@ -28,8 +28,8 @@ public class PlayListInfo {
         this.id = String.valueOf(playList.getId());
         this.playListKey = playList.getPlayListKey();
         this.title = playList.getTitle();
-        this.videoInfoList = playList.getVideoList().stream()
-                .map(VideoInfo::new)
+        this.videoInfoList = playList.getPlayListVideoList().stream()
+                .map(playListVideo -> new VideoInfo(playListVideo.getVideo()))
                 .toList();
         this.accountInfo = new AccountInfo(playList.getAccount());
     }

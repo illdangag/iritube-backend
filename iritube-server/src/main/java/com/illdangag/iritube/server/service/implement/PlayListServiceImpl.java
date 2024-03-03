@@ -2,6 +2,7 @@ package com.illdangag.iritube.server.service.implement;
 
 import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.PlayList;
+import com.illdangag.iritube.core.data.entity.PlayListVideo;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.PlayListShare;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
@@ -11,8 +12,8 @@ import com.illdangag.iritube.server.data.request.PlayListInfoCreate;
 import com.illdangag.iritube.server.data.request.PlayListInfoUpdate;
 import com.illdangag.iritube.server.data.response.PlayListInfo;
 import com.illdangag.iritube.server.data.response.PlayListInfoList;
-import com.illdangag.iritube.server.data.response.VideoInfo;
 import com.illdangag.iritube.server.service.PlayListService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class PlayListServiceImpl implements PlayListService {
     private final VideoRepository videoRepository;
@@ -31,30 +33,48 @@ public class PlayListServiceImpl implements PlayListService {
         this.videoRepository = videoRepository;
     }
 
+    /**
+     * 재생 목록 생성
+     */
     @Override
     public PlayListInfo createPlayListInfo(Account account, @Validated PlayListInfoCreate playListInfoCreate) {
         String title = playListInfoCreate.getTitle();
-        List<String> videoKeyList = playListInfoCreate.getVideoKeyList();
-
-        List<Video> videoList = videoKeyList.stream()
-                .map(videoKey -> {
-                    Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
-                    return videoOptional.orElse(null);
-                })
-                .filter(Objects::nonNull)
-                .toList();
 
         PlayList playList = PlayList.builder()
                 .account(account)
                 .title(title)
-                .videoList(videoList)
                 .build();
+        this.videoRepository.save(playList);
 
+        List<PlayListVideo> playListVideoList = playListInfoCreate.getVideoKeyList().stream()
+                .map(videoKey -> {
+                    Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
+                    return videoOptional.orElse(null);
+                })
+                .map(video -> {
+                    return PlayListVideo.builder()
+                            .playList(playList)
+                            .video(video)
+                            .build();
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        for (int index = 0; index < playListVideoList.size(); index++) {
+            PlayListVideo playListVideo = playListVideoList.get(index);
+            playListVideo.setSequence((long) index);
+            this.videoRepository.save(playListVideo);
+        }
+
+        playList.setPlayListVideoList(playListVideoList);
         this.videoRepository.save(playList);
 
         return new PlayListInfo(playList);
     }
 
+    /**
+     * 재생 목록 정보 조회
+     */
     @Override
     public PlayListInfo getPlayListInfo(Account account, String playListKey) {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(playListKey);
@@ -67,14 +87,12 @@ public class PlayListServiceImpl implements PlayListService {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_PLAYLIST);
         }
 
-        List<Video> videoList = playList.getVideoList();
-        List<VideoInfo> videoInfoList = videoList.stream()
-                .map(VideoInfo::new)
-                .toList();
-
         return new PlayListInfo(playList);
     }
 
+    /**
+     * 재생 목록 정보 목록 조회
+     */
     @Override
     public PlayListInfoList getPlayListInfoList(Account account, int offset, int limit) {
         List<PlayList> playListList = this.videoRepository.getPlayListList(account, offset, limit);
@@ -112,28 +130,36 @@ public class PlayListServiceImpl implements PlayListService {
         }
 
         if (playListInfoUpdate.getVideoKeyList() != null) {
-            List<String> videoKeyList = playListInfoUpdate.getVideoKeyList();
-            List<Video> videoList = videoKeyList.stream()
+            List<PlayListVideo> playListVideoList = playListInfoUpdate.getVideoKeyList().stream()
                     .map(videoKey -> {
                         Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
                         return videoOptional.orElse(null);
                     })
+                    .map(video -> {
+                        return PlayListVideo.builder()
+                                .playList(playList)
+                                .video(video)
+                                .build();
+                    })
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
-            long distinctCount = videoList.stream().distinct().count();
-            if (distinctCount != videoList.size()) { // 동영상 목록에 중복이 존재
-                throw new IritubeException(IritubeCoreError.DUPLICATE_VIDEO_IN_PLAYLIST);
+            for (int index = 0; index < playListVideoList.size(); index++) {
+                PlayListVideo playListVideo = playListVideoList.get(index);
+                playListVideo.setSequence((long) index);
+                this.videoRepository.save(playListVideo);
             }
-            playList.setVideoList(videoList);
+            playList.setPlayListVideoList(playListVideoList);
         }
-
 
         this.videoRepository.save(playList);
 
         return new PlayListInfo(playList);
     }
 
+    /**
+     * 재생 목록 삭제
+     */
     @Override
     public PlayListInfo deletePlayListInfo(Account account, String playListKey) {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(account, playListKey);

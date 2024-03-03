@@ -3,8 +3,6 @@ package com.illdangag.iritube.core.data.entity;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,8 +30,6 @@ public class Video {
     private Long id;
 
     @Builder.Default
-    @NotNull
-    @NotBlank
     private String videoKey = createVideoKey();
 
     @Builder.Default

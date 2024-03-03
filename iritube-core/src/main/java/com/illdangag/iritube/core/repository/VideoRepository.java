@@ -1,9 +1,6 @@
 package com.illdangag.iritube.core.repository;
 
-import com.illdangag.iritube.core.data.entity.Account;
-import com.illdangag.iritube.core.data.entity.PlayList;
-import com.illdangag.iritube.core.data.entity.Video;
-import com.illdangag.iritube.core.data.entity.VideoTag;
+import com.illdangag.iritube.core.data.entity.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +31,8 @@ public interface VideoRepository {
     void save(VideoTag videoTag);
 
     void save(PlayList playList);
+
+    void save(PlayListVideo playListVideo);
 
     void remove(VideoTag videoTag);
 

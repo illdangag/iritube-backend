@@ -1,9 +1,6 @@
 package com.illdangag.iritube.core.repository.implement;
 
-import com.illdangag.iritube.core.data.entity.Account;
-import com.illdangag.iritube.core.data.entity.PlayList;
-import com.illdangag.iritube.core.data.entity.Video;
-import com.illdangag.iritube.core.data.entity.VideoTag;
+import com.illdangag.iritube.core.data.entity.*;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.repository.VideoRepository;
@@ -181,6 +178,16 @@ public class VideoRepositoryImpl implements VideoRepository {
             this.entityManager.merge(playList);
         } else {
             this.entityManager.persist(playList);
+        }
+        this.entityManager.flush();
+    }
+
+    @Override
+    public void save(PlayListVideo playListVideo) {
+        if (playListVideo.getId() != null) {
+            this.entityManager.merge(playListVideo);
+        } else {
+            this.entityManager.persist(playListVideo);
         }
         this.entityManager.flush();
     }

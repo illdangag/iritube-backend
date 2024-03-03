@@ -30,8 +30,6 @@ public class PlayList {
     private Long id;
 
     @Builder.Default
-    @NotNull
-    @NotBlank
     private String playListKey = createPlayListKey();
 
     @Builder.Default
@@ -51,8 +49,8 @@ public class PlayList {
     private PlayListShare share = PlayListShare.PUBLIC;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
-    List<Video> videoList = new ArrayList<>();
+    @OneToMany(mappedBy = "playList", fetch = FetchType.LAZY)
+    List<PlayListVideo> playListVideoList = new ArrayList<>();
 
     private static String createPlayListKey() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
