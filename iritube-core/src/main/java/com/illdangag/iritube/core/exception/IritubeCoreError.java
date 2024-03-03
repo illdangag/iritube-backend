@@ -43,6 +43,7 @@ public enum IritubeCoreError implements IritubeError {
 
     // 재생 목록 오류
     NOT_EXIST_PLAYLIST("05000000", 404, "Not exist play list."),
+    DUPLICATE_VIDEO_IN_PLAYLIST("05000001", 400, "Duplicate video in play list."),
     ;
 
     private final String code;

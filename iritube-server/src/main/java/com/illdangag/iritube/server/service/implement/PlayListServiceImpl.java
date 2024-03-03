@@ -92,6 +92,9 @@ public class PlayListServiceImpl implements PlayListService {
                 .build();
     }
 
+    /**
+     * 재생 목록 수정
+     */
     @Override
     public PlayListInfo updatePlayListInfo(Account account, String playListKey, PlayListInfoUpdate playListInfoUpdate) {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(account, playListKey);
@@ -117,8 +120,14 @@ public class PlayListServiceImpl implements PlayListService {
                     })
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
+
+            long distinctCount = videoList.stream().distinct().count();
+            if (distinctCount != videoList.size()) { // 동영상 목록에 중복이 존재
+                throw new IritubeException(IritubeCoreError.DUPLICATE_VIDEO_IN_PLAYLIST);
+            }
             playList.setVideoList(videoList);
         }
+
 
         this.videoRepository.save(playList);
 

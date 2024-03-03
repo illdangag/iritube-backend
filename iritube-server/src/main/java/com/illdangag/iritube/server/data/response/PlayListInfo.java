@@ -21,6 +21,9 @@ public class PlayListInfo {
     @JsonProperty("videos")
     private List<VideoInfo> videoInfoList;
 
+    @JsonProperty("account")
+    private AccountInfo accountInfo;
+
     public PlayListInfo(PlayList playList) {
         this.id = String.valueOf(playList.getId());
         this.playListKey = playList.getPlayListKey();
@@ -28,5 +31,6 @@ public class PlayListInfo {
         this.videoInfoList = playList.getVideoList().stream()
                 .map(VideoInfo::new)
                 .toList();
+        this.accountInfo = new AccountInfo(playList.getAccount());
     }
 }

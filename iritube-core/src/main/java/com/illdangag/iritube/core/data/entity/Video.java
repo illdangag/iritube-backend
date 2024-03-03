@@ -12,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -85,5 +86,19 @@ public class Video {
 
     private static String createVideoKey() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Video other)) {
+            return false;
+        }
+
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id);
     }
 }
