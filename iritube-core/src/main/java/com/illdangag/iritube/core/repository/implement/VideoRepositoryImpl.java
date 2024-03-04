@@ -200,6 +200,9 @@ public class VideoRepositoryImpl implements VideoRepository {
 
     @Override
     public void remove(PlayList playList) {
+        for (PlayListVideo playListVideo : playList.getPlayListVideoList()) {
+            this.entityManager.remove(playListVideo);
+        }
         this.entityManager.remove(playList);
         this.entityManager.flush();
     }

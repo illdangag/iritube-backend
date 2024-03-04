@@ -3,6 +3,8 @@ package com.illdangag.iritube.core.data.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @Builder
@@ -29,4 +31,18 @@ public class PlayListVideo {
     private Video video;
 
     private Long sequence;
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof PlayListVideo other)) {
+            return false;
+        }
+
+        return this.playList.getId().equals(other.getPlayList().getId()) && this.video.getId().equals(other.getVideo().getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.playList.getId(), this.video.getId());
+    }
 }

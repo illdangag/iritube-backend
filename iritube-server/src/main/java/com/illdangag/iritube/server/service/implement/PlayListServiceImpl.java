@@ -18,9 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -46,7 +45,9 @@ public class PlayListServiceImpl implements PlayListService {
                 .build();
         this.videoRepository.save(playList);
 
+        // 동영상 키 중복 및 동영상 정보로 변환 처리
         List<PlayListVideo> playListVideoList = playListInfoCreate.getVideoKeyList().stream()
+//                .distinct()
                 .map(videoKey -> {
                     Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
                     return videoOptional.orElse(null);
@@ -130,16 +131,22 @@ public class PlayListServiceImpl implements PlayListService {
         }
 
         if (playListInfoUpdate.getVideoKeyList() != null) {
+            Map<String, PlayListVideo> videoKeyPlayListVideoMap =  playList.getPlayListVideoList().stream()
+                    .distinct()
+                    .collect(Collectors.toMap(item -> item.getVideo().getVideoKey(), Function.identity()));
+
             List<PlayListVideo> playListVideoList = playListInfoUpdate.getVideoKeyList().stream()
+                    .distinct()
                     .map(videoKey -> {
-                        Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
-                        return videoOptional.orElse(null);
-                    })
-                    .map(video -> {
-                        return PlayListVideo.builder()
-                                .playList(playList)
-                                .video(video)
-                                .build();
+                        if (videoKeyPlayListVideoMap.containsKey(videoKey)) {
+                            return videoKeyPlayListVideoMap.get(videoKey);
+                        } else {
+                            Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
+                            return videoOptional.map(video -> PlayListVideo.builder()
+                                    .playList(playList)
+                                    .video(video)
+                                    .build()).orElse(null);
+                        }
                     })
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
