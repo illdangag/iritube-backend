@@ -1,4 +1,4 @@
-package com.illdangag.iritube.server.controller;
+package com.illdangag.iritube.server.controller.v1;
 
 import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;

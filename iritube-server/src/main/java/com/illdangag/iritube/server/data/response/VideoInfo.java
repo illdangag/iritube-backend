@@ -66,7 +66,6 @@ public class VideoInfo {
 
     public void setMasking() {
         this.id = null;
-        this.videoKey = null;
         this.createDate = null;
         this.accountInfo = null;
         this.title = null;

@@ -2,7 +2,9 @@ package com.illdangag.iritube.server.controller.v1;
 
 import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
+import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.Const;
+import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.service.VideoStreamService;
@@ -39,8 +41,9 @@ public class VideoStreamController {
             IritubeAuthorizationType.NONE,
     })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/" + Const.HLS_MASTER_FILE)
-    public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey) {
-        InputStream inputStream = this.videoStreamService.getVideoHlsMaster(videoKey);
+    public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey,
+                                                               @RequestContext Account account) {
+        InputStream inputStream = this.videoStreamService.getVideoHlsMaster(account, videoKey);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -67,8 +70,9 @@ public class VideoStreamController {
     })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoKey") String videoKey,
-                                                                 @PathVariable(value = "quality") String quality) {
-        InputStream inputStream = this.videoStreamService.getVideoPlaylist(videoKey, quality);
+                                                                 @PathVariable(value = "quality") String quality,
+                                                                 @RequestContext Account account) {
+        InputStream inputStream = this.videoStreamService.getVideoPlaylist(account, videoKey, quality);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -96,8 +100,9 @@ public class VideoStreamController {
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/{tsFileName}")
     public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoKey") String videoKey,
                                                               @PathVariable(value = "quality") String quality,
-                                                              @PathVariable(value = "tsFileName") String tsFileName) {
-        InputStream inputStream = this.videoStreamService.getVideo(videoKey, quality, tsFileName);
+                                                              @PathVariable(value = "tsFileName") String tsFileName,
+                                                              @RequestContext Account account) {
+        InputStream inputStream = this.videoStreamService.getVideo(account, videoKey, quality, tsFileName);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -123,8 +128,9 @@ public class VideoStreamController {
             IritubeAuthorizationType.NONE,
     })
     @RequestMapping(method = RequestMethod.GET, path = "/thumbnail/{videoKey}")
-    public ResponseEntity<ByteArrayResource> getVideoThumbnail(@PathVariable(value = "videoKey") String videoKey) {
-        InputStream inputStream = this.videoStreamService.getVideoThumbnail(videoKey);
+    public ResponseEntity<ByteArrayResource> getVideoThumbnail(@PathVariable(value = "videoKey") String videoKey,
+                                                               @RequestContext Account account) {
+        InputStream inputStream = this.videoStreamService.getVideoThumbnail(account, videoKey);
         ByteArrayResource resource = null;
         long contentLength = 0;
         try {
@@ -139,7 +145,7 @@ public class VideoStreamController {
         return ResponseEntity
                 .ok()
                 .contentLength(contentLength)
-                .headers(getStreamResponseHeader("thumbnail.pngd"))
+                .headers(getStreamResponseHeader("thumbnail.png"))
                 .body(resource);
     }
 

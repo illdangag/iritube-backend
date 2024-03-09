@@ -10,11 +10,14 @@ public class AccountInfo {
 
     private String nickname;
 
+    private String accountKey;
+
     private AccountAuth auth;
 
     public AccountInfo(Account account) {
         this.id = String.valueOf(account.getId());
         this.nickname = account.getNickname();
+        this.accountKey = account.getAccountKey();
         this.auth = account.getAuth();
     }
 }

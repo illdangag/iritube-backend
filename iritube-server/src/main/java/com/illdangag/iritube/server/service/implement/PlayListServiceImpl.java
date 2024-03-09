@@ -87,10 +87,19 @@ public class PlayListServiceImpl implements PlayListService {
         });
 
         if (playList.getShare() == PlayListShare.PRIVATE && !playList.getAccount().equals(account)) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_PLAYLIST);
+            throw new IritubeException(IritubeCoreError.PRIVATE_PLAYLIST);
         }
 
-        return new PlayListInfo(playList);
+        PlayListInfo playListInfo = new PlayListInfo(playList);
+
+        if (!playList.getAccount().equals(account)) {
+            playListInfo.getVideoInfoList()
+                    .stream()
+                    .filter(videoInfo -> videoInfo.getShare() == VideoShare.PRIVATE)
+                    .forEach(VideoInfo::setMasking);
+        }
+
+        return playListInfo;
     }
 
     /**

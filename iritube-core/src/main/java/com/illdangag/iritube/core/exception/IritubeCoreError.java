@@ -29,10 +29,11 @@ public enum IritubeCoreError implements IritubeError {
     NOT_EXIST_ACCOUNT("02000000", 404, "Not exist account."),
     DUPLICATE_ACCOUNT_NICKNAME("", 400, "Duplicate account nickname"),
 
-    // 영상 오류
+    // 동영상 오류
     INVALID_VIDEO_FILE("03000000", 400, "Invalid video file."),
     NOT_EXIST_VIDEO("03000001", 404, "Not exist video."),
-    INVALID_VIDEO_THUMBNAIL("", 400, "Invalid video thumbnail."),
+    INVALID_VIDEO_THUMBNAIL("03000002", 400, "Invalid video thumbnail."),
+    PRIVATE_VIDEO("03000003", 400, "Private video."),
 
     // 스트림 오류
     NOT_EXIST_HLS_VIDEO("04000000", 404, "Not exist video."),
@@ -44,6 +45,7 @@ public enum IritubeCoreError implements IritubeError {
     // 재생 목록 오류
     NOT_EXIST_PLAYLIST("05000000", 404, "Not exist play list."),
     DUPLICATE_VIDEO_IN_PLAYLIST("05000001", 400, "Duplicate video in play list."),
+    PRIVATE_PLAYLIST("05000002", 400, "Private playlist."),
     ;
 
     private final String code;

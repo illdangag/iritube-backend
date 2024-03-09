@@ -1,13 +1,15 @@
 package com.illdangag.iritube.server.service;
 
+import com.illdangag.iritube.core.data.entity.Account;
+
 import java.io.InputStream;
 
 public interface VideoStreamService {
-    InputStream getVideoHlsMaster(String videoKey);
+    InputStream getVideoHlsMaster(Account account, String videoKey);
 
-    InputStream getVideoPlaylist(String videoKey, String quality);
+    InputStream getVideoPlaylist(Account account, String videoKey, String quality);
 
-    InputStream getVideo(String videoKey, String quality, String videoFile);
+    InputStream getVideo(Account account, String videoKey, String quality, String videoFile);
 
-    InputStream getVideoThumbnail(String videoKey);
+    InputStream getVideoThumbnail(Account account, String videoKey);
 }

@@ -1,10 +1,13 @@
 package com.illdangag.iritube.server.service.implement;
 
+import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.Video;
+import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.VideoRepository;
+import com.illdangag.iritube.server.service.VideoService;
 import com.illdangag.iritube.server.service.VideoStreamService;
 import com.illdangag.iritube.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +28,13 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     }
 
     @Override
-    public InputStream getVideoHlsMaster(String videoKey) {
+    public InputStream getVideoHlsMaster(Account account, String videoKey) {
         Video video = this.getVideoByVideoKey(videoKey);
+
+        if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
+            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+        }
+
         if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
@@ -39,8 +47,13 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     }
 
     @Override
-    public InputStream getVideoPlaylist(String videoKey, String quality) {
+    public InputStream getVideoPlaylist(Account account, String videoKey, String quality) {
         Video video = this.getVideoByVideoKey(videoKey);
+
+        if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
+            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+        }
+
         if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
@@ -49,8 +62,13 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     }
 
     @Override
-    public InputStream getVideo(String videoKey, String quality, String videoFile) {
+    public InputStream getVideo(Account account, String videoKey, String quality, String videoFile) {
         Video video = this.getVideoByVideoKey(videoKey);
+
+        if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
+            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+        }
+
         if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
@@ -59,8 +77,13 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     }
 
     @Override
-    public InputStream getVideoThumbnail(String videoKey) {
+    public InputStream getVideoThumbnail(Account account, String videoKey) {
         Video video = this.getVideoByVideoKey(videoKey);
+
+        if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
+            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+        }
+
         if (video.getState() != VideoState.CONVERTED) {
             throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
         }
