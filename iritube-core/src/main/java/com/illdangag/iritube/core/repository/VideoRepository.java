@@ -14,6 +14,10 @@ public interface VideoRepository {
 
     long getVideoListCount(Account account);
 
+    List<Video> getPublicVideoList(String accountKey, int offset, int limit);
+
+    long getPublicVideoListCount(String accountKey);
+
     List<Video> getPlayableVideoList(int offset, int limit);
 
     Optional<PlayList> getPlayList(String playListKey);
@@ -25,6 +29,10 @@ public interface VideoRepository {
     List<PlayList> getPlayListList(Account account, int offset, int limit);
 
     long getPlayListCount(Account account);
+
+    List<PlayList> getPublicPlayListList(String accountKey, int offset, int limit);
+
+    long getPublicPlayListCount(String accountKey);
 
     void save(Video video);
 

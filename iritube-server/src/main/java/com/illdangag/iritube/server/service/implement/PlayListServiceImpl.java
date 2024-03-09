@@ -5,6 +5,7 @@ import com.illdangag.iritube.core.data.entity.PlayList;
 import com.illdangag.iritube.core.data.entity.PlayListVideo;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.PlayListShare;
+import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.exception.IritubeCoreError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.VideoRepository;
@@ -12,6 +13,7 @@ import com.illdangag.iritube.server.data.request.PlayListInfoCreate;
 import com.illdangag.iritube.server.data.request.PlayListInfoUpdate;
 import com.illdangag.iritube.server.data.response.PlayListInfo;
 import com.illdangag.iritube.server.data.response.PlayListInfoList;
+import com.illdangag.iritube.server.data.response.VideoInfo;
 import com.illdangag.iritube.server.service.PlayListService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +104,38 @@ public class PlayListServiceImpl implements PlayListService {
         List<PlayListInfo> playListInfoList = playListList.stream()
                 .map(PlayListInfo::new)
                 .toList();
+
+        return PlayListInfoList.builder()
+                .total(total)
+                .offset(offset)
+                .limit(limit)
+                .playListInfoList(playListInfoList)
+                .build();
+    }
+
+    @Override
+    public PlayListInfoList getPlayListInfoList(Account account, String accountKey, int offset, int limit) {
+        List<PlayList> playListList;
+        long total = -1;
+
+        if (account != null && account.getAccountKey().equals(accountKey)) {
+            playListList = this.videoRepository.getPlayListList(account, offset, limit);
+            total = this.videoRepository.getPlayListCount(account);
+        } else {
+            playListList = this.videoRepository.getPublicPlayListList(accountKey, offset, limit);
+            total = this.videoRepository.getPublicVideoListCount(accountKey);
+        }
+
+        List<PlayListInfo> playListInfoList = playListList.stream()
+                .map(PlayListInfo::new)
+                .toList();
+
+        if (account == null || !account.getAccountKey().equals(accountKey)) {
+            playListInfoList.stream()
+                    .flatMap(playListInfo -> playListInfo.getVideoInfoList().stream())
+                    .filter(videoInfo -> videoInfo.getShare().equals(VideoShare.PRIVATE))
+                    .forEach(VideoInfo::setMasking);
+        }
 
         return PlayListInfoList.builder()
                 .total(total)

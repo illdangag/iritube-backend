@@ -140,6 +140,30 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
+    public VideoInfoList getVideoInfoList(Account account, String accountKey, int offset, int limit) {
+        List<Video> videoList;
+        long total = -1;
+        if (account != null && account.getAccountKey().equals(accountKey)) {
+            videoList = this.videoRepository.getVideoList(account, offset, limit);
+            total = this.videoRepository.getVideoListCount(account);
+        } else {
+            videoList = this.videoRepository.getPublicVideoList(accountKey, offset, limit);
+            total = this.videoRepository.getPublicVideoListCount(accountKey);
+        }
+
+        List<VideoInfo> videoInfoList = videoList.stream()
+                .map(VideoInfo::new)
+                .collect(Collectors.toList());
+
+        return VideoInfoList.builder()
+                .offset(offset)
+                .limit(limit)
+                .total(total)
+                .videoInfoList(videoInfoList)
+                .build();
+    }
+
+    @Override
     public VideoInfo updateVideoInfo(String accountId, String videoId, VideoInfoUpdate videoInfoUpdate) {
         Account account = this.getAccount(accountId);
         return this.updateVideoInfo(account, videoId, videoInfoUpdate);

@@ -9,6 +9,7 @@ import org.hibernate.envers.Audited;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -27,6 +28,10 @@ public class Account {
     @Builder.Default
     private Long id = null;
 
+    @Column(length = 16, unique = true)
+    @Builder.Default
+    private String accountKey = createAccountKey();
+
     @Builder.Default
     @CreationTimestamp
     private LocalDateTime createDate = LocalDateTime.now();
@@ -38,6 +43,10 @@ public class Account {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private AccountAuth auth = AccountAuth.ACCOUNT;
+
+    private static String createAccountKey() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    }
 
     @Override
     public boolean equals(Object object) {

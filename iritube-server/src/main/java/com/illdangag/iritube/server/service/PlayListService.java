@@ -23,6 +23,8 @@ public interface PlayListService {
      */
     PlayListInfoList getPlayListInfoList(Account account, int offset, int limit);
 
+    PlayListInfoList getPlayListInfoList(Account account, String accountKey, int offset, int limit);
+
     /**
      * 재생 목록 정보 수정
      */

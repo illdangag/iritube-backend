@@ -1,6 +1,7 @@
 package com.illdangag.iritube.core.repository.implement;
 
 import com.illdangag.iritube.core.data.entity.*;
+import com.illdangag.iritube.core.data.entity.type.PlayListShare;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.repository.VideoRepository;
@@ -69,6 +70,30 @@ public class VideoRepositoryImpl implements VideoRepository {
 
         TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
                 .setParameter("account", account);
+
+        return query.getSingleResult();
+    }
+
+    @Override
+    public List<Video> getPublicVideoList(String accountKey, int offset, int limit) {
+        String jpql = "SELECT v FROM Video v JOIN v.account a WHERE a.accountKey = :accountKey AND v.share = :videoShare";
+
+        TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
+                .setParameter("accountKey", accountKey)
+                .setParameter("videoShare", VideoShare.PUBLIC)
+                .setFirstResult(offset)
+                .setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public long getPublicVideoListCount(String accountKey) {
+        String jpql = "SELECT COUNT(1) FROM Video v JOIN v.account a WHERE a.accountKey = :accountKey AND v.share = :videoShare";
+
+        TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
+                .setParameter("accountKey", accountKey)
+                .setParameter("videoShare", VideoShare.PUBLIC);
 
         return query.getSingleResult();
     }
@@ -148,6 +173,30 @@ public class VideoRepositoryImpl implements VideoRepository {
 
         TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
                 .setParameter("account", account);
+
+        return query.getSingleResult();
+    }
+
+    @Override
+    public List<PlayList> getPublicPlayListList(String accountKey, int offset, int limit) {
+        String jpql = "SELECT pl FROM PlayList pl JOIN pl.account a WHERE a.accountKey = :accountKey AND pl.share = :playListShare";
+
+        TypedQuery<PlayList> query = this.entityManager.createQuery(jpql, PlayList.class)
+                .setParameter("accountKey", accountKey)
+                .setParameter("playListShare", PlayListShare.PUBLIC)
+                .setFirstResult(offset)
+                .setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public long getPublicPlayListCount(String accountKey) {
+        String jpql = "SELECT COUNT(1) FROM PlayList pl JOIN pl.account a WHERE a.accountKey = : accountKey AND pl.share = :playListShare";
+
+        TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
+                .setParameter("accountKey", accountKey)
+                .setParameter("playListShare", PlayListShare.PUBLIC);
 
         return query.getSingleResult();
     }

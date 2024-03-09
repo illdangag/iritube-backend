@@ -32,6 +32,8 @@ public interface VideoService {
 
     VideoInfoList getVideoInfoList(Account account, int offset, int limit);
 
+    VideoInfoList getVideoInfoList(Account account, String accountKey, int offset, int limit);
+
     /**
      * 동영상 정보 수정
      */
