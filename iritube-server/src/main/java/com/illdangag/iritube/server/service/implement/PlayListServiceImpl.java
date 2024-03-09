@@ -82,9 +82,7 @@ public class PlayListServiceImpl implements PlayListService {
     public PlayListInfo getPlayListInfo(Account account, String playListKey) {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(playListKey);
 
-        PlayList playList = playListOptional.orElseThrow(() -> {
-            return new IritubeException(IritubeCoreError.NOT_EXIST_PLAYLIST);
-        });
+        PlayList playList = playListOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_PLAYLIST));
 
         if (playList.getShare() == PlayListShare.PRIVATE && !playList.getAccount().equals(account)) {
             throw new IritubeException(IritubeCoreError.PRIVATE_PLAYLIST);
@@ -95,7 +93,7 @@ public class PlayListServiceImpl implements PlayListService {
         if (!playList.getAccount().equals(account)) {
             playListInfo.getVideoInfoList()
                     .stream()
-                    .filter(videoInfo -> videoInfo.getShare() == VideoShare.PRIVATE)
+                    .filter(videoInfo -> videoInfo.getShare() == VideoShare.PRIVATE && !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey()))
                     .forEach(VideoInfo::setMasking);
         }
 
@@ -142,7 +140,7 @@ public class PlayListServiceImpl implements PlayListService {
         if (account == null || !account.getAccountKey().equals(accountKey)) {
             playListInfoList.stream()
                     .flatMap(playListInfo -> playListInfo.getVideoInfoList().stream())
-                    .filter(videoInfo -> videoInfo.getShare().equals(VideoShare.PRIVATE))
+                    .filter(videoInfo -> videoInfo.getShare() == VideoShare.PRIVATE && (account == null || !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey())))
                     .forEach(VideoInfo::setMasking);
         }
 

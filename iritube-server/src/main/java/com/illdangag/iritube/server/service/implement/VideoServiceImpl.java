@@ -109,11 +109,12 @@ public class VideoServiceImpl implements VideoService {
         Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
         Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
 
+        VideoInfo videoInfo = new VideoInfo(video);
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+            videoInfo.setMasking();
         }
 
-        return new VideoInfo(video);
+        return videoInfo;
     }
 
     @Override
