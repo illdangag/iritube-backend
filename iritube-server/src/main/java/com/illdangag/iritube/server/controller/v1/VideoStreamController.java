@@ -5,7 +5,7 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.Const;
 import com.illdangag.iritube.core.data.entity.Account;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.service.VideoStreamService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,7 @@ public class VideoStreamController {
             contentLength = bytes.length;
         } catch (Exception exception) {
             String message = String.format("video: %s", videoKey);
-            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_MASTER_FILE_INPUT_STREAM, message, exception);
+            throw new IritubeException(IritubeServerError.FAIL_TO_GET_HLS_MASTER_FILE_INPUT_STREAM, message, exception);
         }
 
         return ResponseEntity
@@ -81,7 +81,7 @@ public class VideoStreamController {
             contentLength = bytes.length;
         } catch (Exception exception) {
             String message = String.format("video: %s, quality: %s", videoKey, quality);
-            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_PLAYLIST_FILE_INPUT_STREAM, message, exception);
+            throw new IritubeException(IritubeServerError.FAIL_TO_GET_HLS_PLAYLIST_FILE_INPUT_STREAM, message, exception);
         }
 
         return ResponseEntity
@@ -111,7 +111,7 @@ public class VideoStreamController {
             contentLength = bytes.length;
         } catch (Exception exception) {
             String message = String.format("video: %s, quality: %s, ts: %s", videoKey, quality, tsFileName);
-            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_HLS_TS_VIDEO_FILE_INPUT_STREAM, message, exception);
+            throw new IritubeException(IritubeServerError.FAIL_TO_GET_HLS_TS_VIDEO_FILE_INPUT_STREAM, message, exception);
         }
 
         return ResponseEntity
@@ -139,7 +139,7 @@ public class VideoStreamController {
             contentLength = bytes.length;
         } catch (Exception exception) {
             String message = String.format("video: %s", videoKey);
-            throw new IritubeException(IritubeCoreError.FAIL_TO_GET_THUMBNAIL_FILE_INPUT_STREAM, message, exception);
+            throw new IritubeException(IritubeServerError.FAIL_TO_GET_THUMBNAIL_FILE_INPUT_STREAM, message, exception);
         }
 
         return ResponseEntity
@@ -149,6 +149,9 @@ public class VideoStreamController {
                 .body(resource);
     }
 
+    /**
+     * http response에 스트림에 대한 header 설정
+     */
     private HttpHeaders getStreamResponseHeader(String fileName) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-type", "application/octet-stream");

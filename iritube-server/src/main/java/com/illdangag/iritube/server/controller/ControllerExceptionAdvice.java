@@ -1,7 +1,7 @@
 package com.illdangag.iritube.server.controller;
 
 import com.illdangag.iritube.core.data.response.ErrorResponse;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -42,11 +42,11 @@ public class ControllerExceptionAdvice {
         if (exception.getFieldError() != null && exception.getFieldError().getDefaultMessage() != null) {
             message = exception.getFieldError().getDefaultMessage();
         } else {
-            message = IritubeCoreError.INVALID_REQUEST.getMessage();
+            message = IritubeServerError.INVALID_REQUEST.getMessage();
         }
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(IritubeCoreError.INVALID_REQUEST.getCode())
+                .code(IritubeServerError.INVALID_REQUEST.getCode())
                 .message(message)
                 .build();
 
@@ -66,11 +66,11 @@ public class ControllerExceptionAdvice {
             ConstraintViolation<?>[] violations = set.toArray(new ConstraintViolation[0]);
             message = violations[0].getMessage();
         } else {
-            message = IritubeCoreError.INVALID_REQUEST.getMessage();
+            message = IritubeServerError.INVALID_REQUEST.getMessage();
         }
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(IritubeCoreError.INVALID_REQUEST.getCode())
+                .code(IritubeServerError.INVALID_REQUEST.getCode())
                 .message(message)
                 .build();
 
@@ -87,7 +87,7 @@ public class ControllerExceptionAdvice {
         String message = exception.getMessage();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(IritubeCoreError.INVALID_REQUEST.getCode())
+                .code(IritubeServerError.INVALID_REQUEST.getCode())
                 .message(message)
                 .build();
 
@@ -101,8 +101,8 @@ public class ControllerExceptionAdvice {
         log.error("Not found", exception);
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(IritubeCoreError.NOT_FOUNT.getCode())
-                .message(IritubeCoreError.NOT_FOUNT.getMessage())
+                .code(IritubeServerError.NOT_FOUNT.getCode())
+                .message(IritubeServerError.NOT_FOUNT.getMessage())
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -115,8 +115,8 @@ public class ControllerExceptionAdvice {
         log.error("Not supported method", exception);
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(IritubeCoreError.NOT_SUPPORTED_METHOD.getCode())
-                .message(IritubeCoreError.NOT_SUPPORTED_METHOD.getMessage())
+                .code(IritubeServerError.NOT_SUPPORTED_METHOD.getCode())
+                .message(IritubeServerError.NOT_SUPPORTED_METHOD.getMessage())
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

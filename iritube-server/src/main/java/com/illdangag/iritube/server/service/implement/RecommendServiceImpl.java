@@ -2,7 +2,7 @@ package com.illdangag.iritube.server.service.implement;
 
 import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.Video;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.AccountRepository;
 import com.illdangag.iritube.core.repository.VideoRepository;
@@ -62,10 +62,10 @@ public class RecommendServiceImpl implements RecommendService {
         try {
             id = Long.parseLong(accountId);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT, exception);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_ACCOUNT, exception);
         }
 
         Optional<Account> accountOptional = this.accountRepository.getAccount(id);
-        return accountOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT));
+        return accountOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_ACCOUNT));
     }
 }

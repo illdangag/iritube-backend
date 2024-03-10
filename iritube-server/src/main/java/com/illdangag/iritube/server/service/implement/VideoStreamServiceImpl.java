@@ -4,10 +4,9 @@ import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.VideoRepository;
-import com.illdangag.iritube.server.service.VideoService;
 import com.illdangag.iritube.server.service.VideoStreamService;
 import com.illdangag.iritube.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +31,11 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         Video video = this.getVideoByVideoKey(videoKey);
 
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
-            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+            throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
         }
 
         if (video.getState() != VideoState.CONVERTED) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_HLS_VIDEO);
         }
 
         // 조회수 증가
@@ -51,11 +50,11 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         Video video = this.getVideoByVideoKey(videoKey);
 
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
-            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+            throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
         }
 
         if (video.getState() != VideoState.CONVERTED) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_HLS_VIDEO);
         }
 
         return this.storageService.downloadVideoPlaylist(video, quality);
@@ -66,11 +65,11 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         Video video = this.getVideoByVideoKey(videoKey);
 
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
-            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+            throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
         }
 
         if (video.getState() != VideoState.CONVERTED) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_HLS_VIDEO);
         }
 
         return this.storageService.downloadVideo(video, quality, videoFile);
@@ -81,11 +80,11 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         Video video = this.getVideoByVideoKey(videoKey);
 
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
-            throw new IritubeException(IritubeCoreError.PRIVATE_VIDEO);
+            throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
         }
 
         if (video.getState() != VideoState.CONVERTED) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_HLS_VIDEO);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_HLS_VIDEO);
         }
 
         return this.storageService.downloadThumbnail(video);
@@ -93,6 +92,6 @@ public class VideoStreamServiceImpl implements VideoStreamService {
 
     private Video getVideoByVideoKey(String videoKey) {
         Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
-        return videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
+        return videoOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_VIDEO));
     }
 }

@@ -4,7 +4,7 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.data.request.AccountInfoUpdate;
 import com.illdangag.iritube.server.data.request.AccountVideoInfoSearch;
@@ -73,13 +73,13 @@ public class InformationController {
         try {
             offset = Integer.parseInt(offsetVariable);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST, "Offset value is invalid.");
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST, "Offset value is invalid.");
         }
 
         try {
             limit = Integer.parseInt(limitVariable);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST, "Limit value is invalid.");
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST, "Limit value is invalid.");
         }
 
         AccountVideoInfoSearch accountVideoInfoSearch = AccountVideoInfoSearch.builder()
@@ -107,13 +107,13 @@ public class InformationController {
         try {
             offset = Integer.parseInt(offsetVariable);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST, "Offset value is invalid.");
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST, "Offset value is invalid.");
         }
 
         try {
             limit = Integer.parseInt(limitVariable);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST, "Limit value is invalid.");
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST, "Limit value is invalid.");
         }
 
         PlayListInfoList playListInfoList = this.playListService.getPlayListInfoList(account, offset, limit);

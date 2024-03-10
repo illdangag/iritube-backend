@@ -5,7 +5,7 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
 import com.illdangag.iritube.server.data.request.VideoInfoUpdate;
@@ -46,7 +46,7 @@ public class VideoController {
         try {
             inputStream = file.getInputStream();
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST);
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST);
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -54,7 +54,7 @@ public class VideoController {
         try {
             videoInfoCreate = objectMapper.readValue(request, VideoInfoCreate.class);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST);
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST);
         }
 
         VideoInfo videoInfo = this.videoService.uploadVideoInfo(account, videoInfoCreate, file.getOriginalFilename(), inputStream);
@@ -90,13 +90,13 @@ public class VideoController {
         try {
             offset = Integer.parseInt(offsetVariable);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST, "Offset value is invalid.");
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST, "Offset value is invalid.");
         }
 
         try {
             limit = Integer.parseInt(limitVariable);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_REQUEST, "Limit value is invalid.");
+            throw new IritubeException(IritubeServerError.INVALID_REQUEST, "Limit value is invalid.");
         }
 
         VideoInfoList videoInfoList = this.videoService.getVideoInfoList(account, offset, limit);

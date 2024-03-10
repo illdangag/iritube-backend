@@ -7,7 +7,7 @@ import com.illdangag.iritube.core.data.entity.VideoTag;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import com.illdangag.iritube.core.data.message.VideoEncodeEvent;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.AccountRepository;
 import com.illdangag.iritube.core.repository.FileMetadataRepository;
@@ -107,7 +107,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public VideoInfo getVideoInfo(Account account, String videoKey) {
         Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
-        Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
+        Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_VIDEO));
 
         VideoInfo videoInfo = new VideoInfo(video);
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
@@ -175,7 +175,7 @@ public class VideoServiceImpl implements VideoService {
         Video video = this.getVideo(videoKey);
 
         if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
         }
 
         if (videoInfoUpdate.getTitle() != null) {
@@ -232,7 +232,7 @@ public class VideoServiceImpl implements VideoService {
         Video video = this.getVideo(videoId);
 
         if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
         }
 
         video.setDeleted(true);
@@ -242,7 +242,7 @@ public class VideoServiceImpl implements VideoService {
 
     private Video getVideo(String videoKey) {
         Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
-        return videoOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_VIDEO));
+        return videoOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_VIDEO));
     }
 
     private Account getAccount(String accountId) {
@@ -251,10 +251,10 @@ public class VideoServiceImpl implements VideoService {
         try {
             id = Long.parseLong(accountId);
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT, exception);
+            throw new IritubeException(IritubeServerError.NOT_EXIST_ACCOUNT, exception);
         }
 
         Optional<Account> accountOptional = this.accountRepository.getAccount(id);
-        return accountOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_ACCOUNT));
+        return accountOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_ACCOUNT));
     }
 }

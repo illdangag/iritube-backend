@@ -6,7 +6,7 @@ import com.illdangag.iritube.core.data.entity.PlayListVideo;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.PlayListShare;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
-import com.illdangag.iritube.core.exception.IritubeCoreError;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.server.data.request.PlayListInfoCreate;
@@ -82,10 +82,10 @@ public class PlayListServiceImpl implements PlayListService {
     public PlayListInfo getPlayListInfo(Account account, String playListKey) {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(playListKey);
 
-        PlayList playList = playListOptional.orElseThrow(() -> new IritubeException(IritubeCoreError.NOT_EXIST_PLAYLIST));
+        PlayList playList = playListOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_PLAYLIST));
 
         if (playList.getShare() == PlayListShare.PRIVATE && !playList.getAccount().equals(account)) {
-            throw new IritubeException(IritubeCoreError.PRIVATE_PLAYLIST);
+            throw new IritubeException(IritubeServerError.PRIVATE_PLAYLIST);
         }
 
         PlayListInfo playListInfo = new PlayListInfo(playList);
@@ -160,7 +160,7 @@ public class PlayListServiceImpl implements PlayListService {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(account, playListKey);
 
         PlayList playList = playListOptional.orElseThrow(() -> {
-            return new IritubeException(IritubeCoreError.NOT_EXIST_PLAYLIST);
+            return new IritubeException(IritubeServerError.NOT_EXIST_PLAYLIST);
         });
 
         if (playListInfoUpdate.getTitle() != null) {
@@ -213,7 +213,7 @@ public class PlayListServiceImpl implements PlayListService {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(account, playListKey);
 
         PlayList playList = playListOptional.orElseThrow(() -> {
-            return new IritubeException(IritubeCoreError.NOT_EXIST_PLAYLIST);
+            return new IritubeException(IritubeServerError.NOT_EXIST_PLAYLIST);
         });
 
         PlayListInfo playListInfo = new PlayListInfo(playList);
