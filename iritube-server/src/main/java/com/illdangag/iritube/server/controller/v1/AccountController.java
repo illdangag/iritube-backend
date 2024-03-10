@@ -4,10 +4,12 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.server.data.response.AccountInfo;
 import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.data.response.PlayListInfoList;
 import com.illdangag.iritube.server.data.response.VideoInfoList;
+import com.illdangag.iritube.server.service.AccountService;
 import com.illdangag.iritube.server.service.PlayListService;
 import com.illdangag.iritube.server.service.VideoService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +22,25 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/v1/accounts")
 public class AccountController {
+    private final AccountService accountService;
     private final VideoService videoService;
     private final PlayListService playListService;
 
     @Autowired
-    public AccountController(VideoService videoService, PlayListService playListService) {
+    public AccountController(AccountService accountService, VideoService videoService, PlayListService playListService) {
+        this.accountService = accountService;
         this.videoService = videoService;
         this.playListService = playListService;
+    }
+
+    @IritubeAuthorization(type = {
+            IritubeAuthorizationType.NONE
+    })
+    @RequestMapping(method = RequestMethod.GET, path = "/{accountKey}")
+    public ResponseEntity<AccountInfo> getAccount(@PathVariable(name = "accountKey") String accountKey,
+                                                  @RequestContext Account account) {
+        AccountInfo accountInfo = this.accountService.getAccountInfo(account, accountKey);
+        return ResponseEntity.status(HttpStatus.OK).body(accountInfo);
     }
 
     @IritubeAuthorization(type = {

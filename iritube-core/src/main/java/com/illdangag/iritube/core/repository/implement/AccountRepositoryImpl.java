@@ -47,6 +47,20 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
+    public Optional<Account> getAccountByAccountKey(String accountKey) {
+        String jpql = "SELECT a FROM Account a WHERE a.accountKey = :accountKey";
+        TypedQuery<Account> query = this.entityManager.createQuery(jpql, Account.class)
+                .setParameter("accountKey", accountKey);
+
+        try {
+            Account account = query.getSingleResult();
+            return Optional.of(account);
+        } catch (Exception exception) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public void save(Account account) {
         if (account.getId() != null) {
             this.entityManager.merge(account);

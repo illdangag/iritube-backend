@@ -9,5 +9,7 @@ public interface AccountRepository {
 
     Optional<Account> getAccountByNickname(String nickname);
 
+    Optional<Account> getAccountByAccountKey(String accountKey);
+
     void save(Account account);
 }

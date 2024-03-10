@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 public interface AccountService {
     AccountInfo getAccountInfo(Account account);
 
+    AccountInfo getAccountInfo(Account account, String accountKey);
+
     AccountInfo updateAccountInfo(Account account, AccountInfoUpdate accountInfoUpdate);
 
     VideoInfoList getVideoInfoList(Account account, @Valid AccountVideoInfoSearch accountVideoInfoSearch);

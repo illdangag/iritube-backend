@@ -35,6 +35,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AccountInfo getAccountInfo(Account account, String accountKey) {
+        Optional<Account> accountOptional = this.accountRepository.getAccountByAccountKey(accountKey);
+        Account targetAccount = accountOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_ACCOUNT));
+        return new AccountInfo(targetAccount);
+    }
+
+    @Override
     public AccountInfo updateAccountInfo(Account account, AccountInfoUpdate accountInfoUpdate) {
         if (accountInfoUpdate.getNickname() != null) {
             String nickname = accountInfoUpdate.getNickname().replace(" ", "");
