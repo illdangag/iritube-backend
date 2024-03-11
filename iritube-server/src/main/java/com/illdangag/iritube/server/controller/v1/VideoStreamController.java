@@ -37,9 +37,7 @@ public class VideoStreamController {
     /**
      * HLS master
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/" + Const.HLS_MASTER_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey,
                                                                @RequestContext Account account) {
@@ -65,9 +63,7 @@ public class VideoStreamController {
     /**
      * HLS playlist
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/" + Const.HLS_PLAY_LIST_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsPlaylist(@PathVariable(value = "videoKey") String videoKey,
                                                                  @PathVariable(value = "quality") String quality,
@@ -94,9 +90,7 @@ public class VideoStreamController {
     /**
      * HLS ts video file
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/{quality}/{tsFileName}")
     public ResponseEntity<ByteArrayResource> getVideoHlsVideo(@PathVariable(value = "videoKey") String videoKey,
                                                               @PathVariable(value = "quality") String quality,
@@ -124,9 +118,7 @@ public class VideoStreamController {
     /**
      * video thumbnail
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/thumbnail/{videoKey}")
     public ResponseEntity<ByteArrayResource> getVideoThumbnail(@PathVariable(value = "videoKey") String videoKey,
                                                                @RequestContext Account account) {

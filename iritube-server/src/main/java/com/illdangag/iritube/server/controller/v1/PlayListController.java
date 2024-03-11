@@ -28,9 +28,7 @@ public class PlayListController {
     /**
      * 재생 목록 생성
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.POST, path = "")
     public ResponseEntity<PlayListInfo> createPlayList(@RequestBody PlayListInfoCreate playListInfoCreate,
                                                        @RequestContext Account account) {
@@ -41,9 +39,7 @@ public class PlayListController {
     /**
      * 재생 목록 정보 조회
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{playListKey}")
     public ResponseEntity<PlayListInfo> getPlayList(@PathVariable("playListKey") String playListKey,
                                                     @RequestContext Account account) {
@@ -54,9 +50,7 @@ public class PlayListController {
     /**
      * 재생 목록 수정
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.PATCH, path = "/{playListKey}")
     public ResponseEntity<PlayListInfo> updatePlayList(@PathVariable("playListKey") String playListKey,
                                                        @RequestBody PlayListInfoUpdate playListInfoUpdate,
@@ -68,9 +62,7 @@ public class PlayListController {
     /**
      * 재생 목록 삭제
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.DELETE, path = "/{playListKey}")
     public ResponseEntity<PlayListInfo> deletePlayList(@PathVariable("playListKey") String playListKey,
                                                        @RequestContext Account account) {

@@ -33,9 +33,10 @@ public class AccountController {
         this.playListService = playListService;
     }
 
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE
-    })
+    /**
+     * accountKey로 계정 정보 조회
+     */
+    @IritubeAuthorization(type = {IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{accountKey}")
     public ResponseEntity<AccountInfo> getAccount(@PathVariable(name = "accountKey") String accountKey,
                                                   @RequestContext Account account) {
@@ -43,9 +44,10 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).body(accountInfo);
     }
 
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE
-    })
+    /**
+     * accountKey로 계정의 업로드된 동영상의 목록 조회
+     */
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{accountKey}/videos")
     public ResponseEntity<VideoInfoList> getAccountVideoList(@PathVariable(name = "accountKey") String accountKey,
                                                              @RequestParam(name = "offset", defaultValue = "0") String offsetVariable,
@@ -70,9 +72,10 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).body(videoInfoList);
     }
 
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE
-    })
+    /**
+     * accountKey로 계정의 등록된 재생 목록의 목록 조회
+     */
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{accountKey}/playlists")
     public ResponseEntity<PlayListInfoList> getAccountPlayListList(@PathVariable(name = "accountKey") String accountKey,
                                                                    @RequestParam(name = "offset", defaultValue = "0") String offsetVariable,

@@ -35,9 +35,7 @@ public class VideoController {
     /**
      * 동영상 업로드
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.POST, path = "")
     public ResponseEntity<VideoInfo> uploadVideo(@RequestParam(value = "video") MultipartFile file,
                                                 @RequestParam(value = "request") String request,
@@ -64,9 +62,7 @@ public class VideoController {
     /**
      * 동영상 정보 조회
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.NONE,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}")
     public ResponseEntity<VideoInfo> getVideo(@PathVariable(value = "videoKey") String videoKey,
                                               @RequestContext Account account) {
@@ -77,9 +73,7 @@ public class VideoController {
     /**
      * 동영상 정보 목록 조회
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "")
     public ResponseEntity<VideoInfoList> getVideoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
                                                       @RequestParam(name = "limit", defaultValue = "20", required = false) String limitVariable,
@@ -106,9 +100,7 @@ public class VideoController {
     /**
      * 동영상 정보 수정
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.PATCH, path = "/{videoKey}")
     public ResponseEntity<VideoInfo> updateVideo(@PathVariable(value = "videoKey") String videoKey,
                                                  @RequestBody VideoInfoUpdate videoInfoUpdate,
@@ -120,9 +112,7 @@ public class VideoController {
     /**
      * 동영상 삭제
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.DELETE, path = "/{videoKey}")
     public ResponseEntity<VideoInfo> deleteVideo(@PathVariable(value = "videoKey") String videoKey,
                                                  @RequestContext Account account) {

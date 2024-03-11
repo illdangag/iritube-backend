@@ -35,9 +35,7 @@ public class InformationController {
     /**
      * 내 계정 정보 조회
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "/accounts")
     public ResponseEntity<AccountInfo> getMyAccount(@RequestContext Account account) {
         AccountInfo accountInfo = this.accountService.getAccountInfo(account);
@@ -47,9 +45,7 @@ public class InformationController {
     /**
      * 내 계정 정보 갱신
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.PATCH, path = "/accounts")
     public ResponseEntity<AccountInfo> updateMyAccount(@RequestBody AccountInfoUpdate accountInfoUpdate,
                                                        @RequestContext Account account) {
@@ -60,9 +56,7 @@ public class InformationController {
     /**
      * 내 계정이 업로드한 동영상 목록
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "/accounts/videos")
     public ResponseEntity<VideoInfoList> getMyVideoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
                                                         @RequestParam(name = "limit", defaultValue = "20", required = false) String limitVariable,
@@ -94,9 +88,7 @@ public class InformationController {
     /**
      * 내 계정의 재생 목록 목록 조회
      */
-    @IritubeAuthorization(type = {
-            IritubeAuthorizationType.ACCOUNT,
-    })
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "/accounts/playlists")
     public ResponseEntity<PlayListInfoList> getMyPlayListInfoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
                                                                   @RequestParam(name = "limit", defaultValue = "20", required = false) String limitVariable,

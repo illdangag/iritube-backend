@@ -29,11 +29,17 @@ public class AccountServiceImpl implements AccountService {
         this.videoRepository = videoRepository;
     }
 
+    /**
+     * 계정 정보 조회
+     */
     @Override
     public AccountInfo getAccountInfo(Account account) {
         return new AccountInfo(account);
     }
 
+    /**
+     * 계정 정보 조회
+     */
     @Override
     public AccountInfo getAccountInfo(Account account, String accountKey) {
         Optional<Account> accountOptional = this.accountRepository.getAccountByAccountKey(accountKey);
@@ -41,6 +47,9 @@ public class AccountServiceImpl implements AccountService {
         return new AccountInfo(targetAccount);
     }
 
+    /**
+     * 계정 정보 수정
+     */
     @Override
     public AccountInfo updateAccountInfo(Account account, AccountInfoUpdate accountInfoUpdate) {
         if (accountInfoUpdate.getNickname() != null) {
@@ -59,6 +68,9 @@ public class AccountServiceImpl implements AccountService {
         return new AccountInfo(account);
     }
 
+    /**
+     * 계정이 업로드한 동영상 목록 조회
+     */
     @Override
     public VideoInfoList getVideoInfoList(Account account, AccountVideoInfoSearch accountVideoInfoSearch) {
         int offset = accountVideoInfoSearch.getOffset();
