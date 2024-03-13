@@ -76,7 +76,7 @@ public class VideoRepositoryImpl implements VideoRepository {
 
     @Override
     public List<Video> getPublicVideoList(String accountKey, int offset, int limit) {
-        String jpql = "SELECT v FROM Video v JOIN v.account a WHERE a.accountKey = :accountKey AND v.share = :videoShare";
+        String jpql = "SELECT v FROM Video v JOIN v.account a WHERE v.deleted = false AND a.accountKey = :accountKey AND v.share = :videoShare";
 
         TypedQuery<Video> query = this.entityManager.createQuery(jpql, Video.class)
                 .setParameter("accountKey", accountKey)
@@ -89,7 +89,7 @@ public class VideoRepositoryImpl implements VideoRepository {
 
     @Override
     public long getPublicVideoListCount(String accountKey) {
-        String jpql = "SELECT COUNT(1) FROM Video v JOIN v.account a WHERE a.accountKey = :accountKey AND v.share = :videoShare";
+        String jpql = "SELECT COUNT(1) FROM Video v JOIN v.account a WHERE v.deleted = false AND a.accountKey = :accountKey AND v.share = :videoShare";
 
         TypedQuery<Long> query = this.entityManager.createQuery(jpql, Long.class)
                 .setParameter("accountKey", accountKey)
