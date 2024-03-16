@@ -5,8 +5,8 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.Const;
 import com.illdangag.iritube.core.data.entity.Account;
-import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.server.service.VideoStreamService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -134,10 +134,13 @@ public class VideoStreamController {
             throw new IritubeException(IritubeServerError.FAIL_TO_GET_THUMBNAIL_FILE_INPUT_STREAM, message, exception);
         }
 
+        HttpHeaders httpHeaders = getStreamResponseHeader("thumbnail.png");
+        httpHeaders.add("Cache-Control", "max-age=31536000");
+
         return ResponseEntity
                 .ok()
                 .contentLength(contentLength)
-                .headers(getStreamResponseHeader("thumbnail.png"))
+                .headers(httpHeaders)
                 .body(resource);
     }
 
