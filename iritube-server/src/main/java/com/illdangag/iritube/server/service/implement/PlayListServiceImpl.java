@@ -93,7 +93,8 @@ public class PlayListServiceImpl implements PlayListService {
         if (!playList.getAccount().equals(account)) {
             playListInfo.getVideoInfoList()
                     .stream()
-                    .filter(videoInfo -> videoInfo.getShare() == VideoShare.PRIVATE && !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey()))
+                    .filter(videoInfo -> videoInfo.getDeleted() || videoInfo.getShare() == VideoShare.PRIVATE
+                            && !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey()))
                     .forEach(VideoInfo::setMasking);
         }
 
@@ -140,7 +141,9 @@ public class PlayListServiceImpl implements PlayListService {
         if (account == null || !account.getAccountKey().equals(accountKey)) {
             playListInfoList.stream()
                     .flatMap(playListInfo -> playListInfo.getVideoInfoList().stream())
-                    .filter(videoInfo -> videoInfo.getShare() == VideoShare.PRIVATE && (account == null || !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey())))
+                    .filter(videoInfo -> videoInfo.getDeleted()
+                            || videoInfo.getShare() == VideoShare.PRIVATE
+                            && (account == null || !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey())))
                     .forEach(VideoInfo::setMasking);
         }
 

@@ -41,6 +41,8 @@ public class VideoInfo {
 
     private VideoShare share;
 
+    private Boolean deleted;
+
     @JsonProperty("tags")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> tagList;
@@ -58,10 +60,15 @@ public class VideoInfo {
         this.duration = video.getDuration();
         this.state = video.getState();
         this.share = video.getShare();
+        this.deleted = video.getDeleted();
         this.tagList = video.getVideoTagList().stream()
                 .map(VideoTag::getTag)
                 .collect(Collectors.toList());
         this.viewCount = video.getViewCount();
+
+        if (this.deleted) {
+            this.setMasking();
+        }
     }
 
     public void setMasking() {
