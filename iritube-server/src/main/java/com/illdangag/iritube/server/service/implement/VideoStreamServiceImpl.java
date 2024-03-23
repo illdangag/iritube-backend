@@ -79,6 +79,10 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     public InputStream getVideoThumbnail(Account account, String videoKey) {
         Video video = this.getVideoByVideoKey(videoKey);
 
+        if (video.getDeleted()) {
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
+        }
+
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
             throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
         }

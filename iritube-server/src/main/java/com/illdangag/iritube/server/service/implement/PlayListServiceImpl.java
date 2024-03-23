@@ -49,18 +49,17 @@ public class PlayListServiceImpl implements PlayListService {
 
         // 동영상 키 중복 및 동영상 정보로 변환 처리
         List<PlayListVideo> playListVideoList = playListInfoCreate.getVideoKeyList().stream()
-//                .distinct()
                 .map(videoKey -> {
                     Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
                     return videoOptional.orElse(null);
                 })
+                .filter(Objects::nonNull)
                 .map(video -> {
                     return PlayListVideo.builder()
                             .playList(playList)
                             .video(video)
                             .build();
                 })
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         for (int index = 0; index < playListVideoList.size(); index++) {
