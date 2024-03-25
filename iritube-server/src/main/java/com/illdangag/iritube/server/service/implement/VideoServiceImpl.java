@@ -174,6 +174,10 @@ public class VideoServiceImpl implements VideoService {
     public VideoInfo updateVideoInfo(Account account, String videoKey, VideoInfoUpdate videoInfoUpdate) {
         Video video = this.getVideo(videoKey);
 
+        if (video.getDeleted()) { // 삭제된 동영상인 경우
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
+        }
+
         if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
             throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
         }
@@ -230,6 +234,10 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public VideoInfo deleteVideoInfo(Account account, String videoId) {
         Video video = this.getVideo(videoId);
+
+        if (video.getDeleted()) { // 삭제된 동영상인 경우
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
+        }
 
         if (!account.equals(video.getAccount())) { // 요청한 계정이 소유한 영상이 아닌 경우
             throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);

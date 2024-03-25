@@ -30,6 +30,10 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     public InputStream getVideoHlsMaster(Account account, String videoKey) {
         Video video = this.getVideoByVideoKey(videoKey);
 
+        if (video.getDeleted()) {
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
+        }
+
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
             throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
         }
@@ -49,6 +53,10 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     public InputStream getVideoPlaylist(Account account, String videoKey, String quality) {
         Video video = this.getVideoByVideoKey(videoKey);
 
+        if (video.getDeleted()) {
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
+        }
+
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
             throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
         }
@@ -63,6 +71,10 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     @Override
     public InputStream getVideo(Account account, String videoKey, String quality, String videoFile) {
         Video video = this.getVideoByVideoKey(videoKey);
+
+        if (video.getDeleted()) {
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
+        }
 
         if (video.getShare() == VideoShare.PRIVATE && !video.getAccount().equals(account)) {
             throw new IritubeException(IritubeServerError.PRIVATE_VIDEO);
