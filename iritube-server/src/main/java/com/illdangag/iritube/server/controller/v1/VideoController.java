@@ -5,6 +5,8 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.server.configuration.ApiCallLog;
+import com.illdangag.iritube.server.configuration.ApiCode;
 import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.data.request.VideoInfoCreate;
@@ -35,6 +37,7 @@ public class VideoController {
     /**
      * 동영상 업로드
      */
+    @ApiCallLog(apiCode = ApiCode.VD_001)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.POST, path = "")
     public ResponseEntity<VideoInfo> uploadVideo(@RequestParam(value = "video") MultipartFile file,
@@ -62,6 +65,7 @@ public class VideoController {
     /**
      * 동영상 정보 조회
      */
+    @ApiCallLog(apiCode = ApiCode.VD_002)
     @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{videoKey}")
     public ResponseEntity<VideoInfo> getVideo(@PathVariable(value = "videoKey") String videoKey,
@@ -73,6 +77,7 @@ public class VideoController {
     /**
      * 동영상 정보 목록 조회
      */
+    @ApiCallLog(apiCode = ApiCode.VD_003)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "")
     public ResponseEntity<VideoInfoList> getVideoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
@@ -100,6 +105,7 @@ public class VideoController {
     /**
      * 동영상 정보 수정
      */
+    @ApiCallLog(apiCode = ApiCode.VD_004)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.PATCH, path = "/{videoKey}")
     public ResponseEntity<VideoInfo> updateVideo(@PathVariable(value = "videoKey") String videoKey,
@@ -112,6 +118,7 @@ public class VideoController {
     /**
      * 동영상 삭제
      */
+    @ApiCallLog(apiCode = ApiCode.VD_005)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.DELETE, path = "/{videoKey}")
     public ResponseEntity<VideoInfo> deleteVideo(@PathVariable(value = "videoKey") String videoKey,

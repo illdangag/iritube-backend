@@ -4,6 +4,8 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.server.configuration.ApiCallLog;
+import com.illdangag.iritube.server.configuration.ApiCode;
 import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.data.request.AccountInfoUpdate;
@@ -35,6 +37,7 @@ public class InformationController {
     /**
      * 내 계정 정보 조회
      */
+    @ApiCallLog(apiCode = ApiCode.IF_001)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "/accounts")
     public ResponseEntity<AccountInfo> getMyAccount(@RequestContext Account account) {
@@ -45,6 +48,7 @@ public class InformationController {
     /**
      * 내 계정 정보 갱신
      */
+    @ApiCallLog(apiCode = ApiCode.IF_002)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.PATCH, path = "/accounts")
     public ResponseEntity<AccountInfo> updateMyAccount(@RequestBody AccountInfoUpdate accountInfoUpdate,
@@ -56,6 +60,7 @@ public class InformationController {
     /**
      * 내 계정이 업로드한 동영상 목록
      */
+    @ApiCallLog(apiCode = ApiCode.IF_003)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "/accounts/videos")
     public ResponseEntity<VideoInfoList> getMyVideoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,
@@ -88,6 +93,7 @@ public class InformationController {
     /**
      * 내 계정의 재생 목록 목록 조회
      */
+    @ApiCallLog(apiCode = ApiCode.IF_004)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.GET, path = "/accounts/playlists")
     public ResponseEntity<PlayListInfoList> getMyPlayListInfoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,

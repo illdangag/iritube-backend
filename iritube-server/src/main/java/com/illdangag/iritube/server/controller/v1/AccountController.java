@@ -4,6 +4,8 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.server.configuration.ApiCallLog;
+import com.illdangag.iritube.server.configuration.ApiCode;
 import com.illdangag.iritube.server.data.response.AccountInfo;
 import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
@@ -36,6 +38,7 @@ public class AccountController {
     /**
      * accountKey로 계정 정보 조회
      */
+    @ApiCallLog(apiCode = ApiCode.AC_001)
     @IritubeAuthorization(type = {IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{accountKey}")
     public ResponseEntity<AccountInfo> getAccount(@PathVariable(name = "accountKey") String accountKey,
@@ -47,6 +50,7 @@ public class AccountController {
     /**
      * accountKey로 계정의 업로드된 동영상의 목록 조회
      */
+    @ApiCallLog(apiCode = ApiCode.AC_002)
     @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{accountKey}/videos")
     public ResponseEntity<VideoInfoList> getAccountVideoList(@PathVariable(name = "accountKey") String accountKey,
@@ -75,6 +79,7 @@ public class AccountController {
     /**
      * accountKey로 계정의 등록된 재생 목록의 목록 조회
      */
+    @ApiCallLog(apiCode = ApiCode.AC_003)
     @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{accountKey}/playlists")
     public ResponseEntity<PlayListInfoList> getAccountPlayListList(@PathVariable(name = "accountKey") String accountKey,

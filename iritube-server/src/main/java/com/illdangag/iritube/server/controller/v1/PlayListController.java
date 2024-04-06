@@ -4,6 +4,8 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.server.configuration.ApiCallLog;
+import com.illdangag.iritube.server.configuration.ApiCode;
 import com.illdangag.iritube.server.data.request.PlayListInfoCreate;
 import com.illdangag.iritube.server.data.request.PlayListInfoUpdate;
 import com.illdangag.iritube.server.data.response.PlayListInfo;
@@ -28,6 +30,7 @@ public class PlayListController {
     /**
      * 재생 목록 생성
      */
+    @ApiCallLog(apiCode = ApiCode.PL_001)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.POST, path = "")
     public ResponseEntity<PlayListInfo> createPlayList(@RequestBody PlayListInfoCreate playListInfoCreate,
@@ -39,6 +42,7 @@ public class PlayListController {
     /**
      * 재생 목록 정보 조회
      */
+    @ApiCallLog(apiCode = ApiCode.PL_002)
     @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/{playListKey}")
     public ResponseEntity<PlayListInfo> getPlayList(@PathVariable("playListKey") String playListKey,
@@ -50,6 +54,7 @@ public class PlayListController {
     /**
      * 재생 목록 수정
      */
+    @ApiCallLog(apiCode = ApiCode.PL_003)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.PATCH, path = "/{playListKey}")
     public ResponseEntity<PlayListInfo> updatePlayList(@PathVariable("playListKey") String playListKey,
@@ -62,6 +67,7 @@ public class PlayListController {
     /**
      * 재생 목록 삭제
      */
+    @ApiCallLog(apiCode = ApiCode.PL_004)
     @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
     @RequestMapping(method = RequestMethod.DELETE, path = "/{playListKey}")
     public ResponseEntity<PlayListInfo> deletePlayList(@PathVariable("playListKey") String playListKey,

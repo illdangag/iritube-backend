@@ -4,6 +4,8 @@ import com.illdangag.iritube.core.annotation.IritubeAuthorization;
 import com.illdangag.iritube.core.annotation.IritubeAuthorizationType;
 import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.entity.Account;
+import com.illdangag.iritube.server.configuration.ApiCallLog;
+import com.illdangag.iritube.server.configuration.ApiCode;
 import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.server.data.response.VideoInfoList;
@@ -32,6 +34,7 @@ public class RecommendController {
      * 추천 동영상 목록
      * - 추후 개선
      */
+    @ApiCallLog(apiCode = ApiCode.RC_001)
     @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/videos")
     public ResponseEntity<VideoInfoList> getVideoInfoList(@RequestParam(name = "offset", defaultValue = "0", required = false) String offsetVariable,

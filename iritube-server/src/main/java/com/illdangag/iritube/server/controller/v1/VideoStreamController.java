@@ -6,6 +6,8 @@ import com.illdangag.iritube.core.annotation.RequestContext;
 import com.illdangag.iritube.core.data.Const;
 import com.illdangag.iritube.core.data.entity.Account;
 import com.illdangag.iritube.core.exception.IritubeException;
+import com.illdangag.iritube.server.configuration.ApiCallLog;
+import com.illdangag.iritube.server.configuration.ApiCode;
 import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.server.service.VideoStreamService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ public class VideoStreamController {
     /**
      * HLS master
      */
+    @ApiCallLog(apiCode = ApiCode.VS_001)
     @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/stream/{videoKey}/" + Const.HLS_MASTER_FILE)
     public ResponseEntity<ByteArrayResource> getVideoHlsMaster(@PathVariable(value = "videoKey") String videoKey,
@@ -118,6 +121,7 @@ public class VideoStreamController {
     /**
      * video thumbnail
      */
+    @ApiCallLog(apiCode = ApiCode.VT_001)
     @IritubeAuthorization(type = { IritubeAuthorizationType.NONE, })
     @RequestMapping(method = RequestMethod.GET, path = "/thumbnail/{videoKey}")
     public ResponseEntity<ByteArrayResource> getVideoThumbnail(@PathVariable(value = "videoKey") String videoKey,
