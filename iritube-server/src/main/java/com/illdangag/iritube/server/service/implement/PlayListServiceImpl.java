@@ -6,7 +6,6 @@ import com.illdangag.iritube.core.data.entity.PlayListVideo;
 import com.illdangag.iritube.core.data.entity.Video;
 import com.illdangag.iritube.core.data.entity.type.PlayListShare;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
-import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.core.exception.IritubeException;
 import com.illdangag.iritube.core.repository.VideoRepository;
 import com.illdangag.iritube.server.data.request.PlayListInfoCreate;
@@ -14,13 +13,17 @@ import com.illdangag.iritube.server.data.request.PlayListInfoUpdate;
 import com.illdangag.iritube.server.data.response.PlayListInfo;
 import com.illdangag.iritube.server.data.response.PlayListInfoList;
 import com.illdangag.iritube.server.data.response.VideoInfo;
+import com.illdangag.iritube.server.exception.IritubeServerError;
 import com.illdangag.iritube.server.service.PlayListService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -210,6 +213,9 @@ public class PlayListServiceImpl implements PlayListService {
                         this.videoRepository.remove(playListVideo);
                     });
 
+            for (PlayListVideo playListVideo : playListVideoList) {
+                this.videoRepository.save(playListVideo);
+            }
             playList.setPlayListVideoList(playListVideoList);
         }
 
