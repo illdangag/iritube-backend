@@ -110,7 +110,15 @@ public class PlayListServiceImpl implements PlayListService {
         long total = this.videoRepository.getPlayListCount(account);
 
         List<PlayListInfo> playListInfoList = playListList.stream()
-                .map(PlayListInfo::new)
+                .map(playList -> {
+                    PlayListInfo playListInfo = new PlayListInfo(playList);
+                    playListInfo.getVideoInfoList()
+                            .stream()
+                            .filter(videoInfo -> videoInfo.getDeleted() || videoInfo.getShare() == VideoShare.PRIVATE
+                                    && !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey()))
+                            .forEach(VideoInfo::setMasking);
+                    return playListInfo;
+                })
                 .toList();
 
         return PlayListInfoList.builder()
@@ -135,17 +143,16 @@ public class PlayListServiceImpl implements PlayListService {
         }
 
         List<PlayListInfo> playListInfoList = playListList.stream()
-                .map(PlayListInfo::new)
+                .map(playList -> {
+                    PlayListInfo playListInfo = new PlayListInfo(playList);
+                    playListInfo.getVideoInfoList()
+                            .stream()
+                            .filter(videoInfo -> videoInfo.getDeleted() || videoInfo.getShare() == VideoShare.PRIVATE
+                                    && !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey()))
+                            .forEach(VideoInfo::setMasking);
+                    return playListInfo;
+                })
                 .toList();
-
-        if (account == null || !account.getAccountKey().equals(accountKey)) {
-            playListInfoList.stream()
-                    .flatMap(playListInfo -> playListInfo.getVideoInfoList().stream())
-                    .filter(videoInfo -> videoInfo.getDeleted()
-                            || videoInfo.getShare() == VideoShare.PRIVATE
-                            && (account == null || !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey())))
-                    .forEach(VideoInfo::setMasking);
-        }
 
         return PlayListInfoList.builder()
                 .total(total)
