@@ -255,4 +255,10 @@ public class VideoRepositoryImpl implements VideoRepository {
         this.entityManager.remove(playList);
         this.entityManager.flush();
     }
+
+    @Override
+    public void remove(PlayListVideo playListVideo) {
+        this.entityManager.remove(playListVideo);
+        this.entityManager.flush();
+    }
 }

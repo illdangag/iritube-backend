@@ -32,6 +32,9 @@ public class PlayListInfo {
         this.playListKey = playList.getPlayListKey();
         this.title = playList.getTitle();
         this.videoInfoList = playList.getPlayListVideoList().stream()
+                .sorted((itemA, itemB) -> {
+                    return (int) (itemA.getSequence() - itemB.getSequence());
+                })
                 .map(playListVideo -> new VideoInfo(playListVideo.getVideo()))
                 .toList();
         this.accountInfo = new AccountInfo(playList.getAccount());

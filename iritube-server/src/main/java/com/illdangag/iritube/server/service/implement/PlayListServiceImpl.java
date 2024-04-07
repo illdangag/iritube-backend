@@ -181,9 +181,9 @@ public class PlayListServiceImpl implements PlayListService {
             List<PlayListVideo> playListVideoList = playListInfoUpdate.getVideoKeyList().stream()
                     .distinct()
                     .map(videoKey -> {
-                        if (videoKeyPlayListVideoMap.containsKey(videoKey)) {
+                        if (videoKeyPlayListVideoMap.containsKey(videoKey)) { // 해당 재생 목록에 이미 존재는 동영상인 경우
                             return videoKeyPlayListVideoMap.get(videoKey);
-                        } else {
+                        } else { // 새롭게 추가되는 동영상인 경우
                             Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
                             return videoOptional.map(video -> PlayListVideo.builder()
                                     .playList(playList)
@@ -194,11 +194,22 @@ public class PlayListServiceImpl implements PlayListService {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
+            // 동영상 순서 재설정
             for (int index = 0; index < playListVideoList.size(); index++) {
                 PlayListVideo playListVideo = playListVideoList.get(index);
                 playListVideo.setSequence((long) index);
-                this.videoRepository.save(playListVideo);
             }
+
+            // 재생 목록에서 제거된 동영상 정보 삭제
+            videoKeyPlayListVideoMap.values().stream()
+                    .filter(playListVideo -> {
+                        String videoKey = playListVideo.getVideo().getVideoKey();
+                        return !playListInfoUpdate.getVideoKeyList().contains(videoKey);
+                    })
+                    .forEach(playListVideo -> {
+                        this.videoRepository.remove(playListVideo);
+                    });
+
             playList.setPlayListVideoList(playListVideoList);
         }
 

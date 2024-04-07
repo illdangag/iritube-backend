@@ -45,4 +45,6 @@ public interface VideoRepository {
     void remove(VideoTag videoTag);
 
     void remove(PlayList playList);
+
+    void remove(PlayListVideo playListVideo);
 }
