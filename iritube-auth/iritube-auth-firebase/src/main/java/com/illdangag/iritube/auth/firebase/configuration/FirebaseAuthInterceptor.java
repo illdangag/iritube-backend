@@ -139,7 +139,7 @@ public class FirebaseAuthInterceptor implements HandlerInterceptor {
                 throw new IritubeException(IritubeFirebaseError.INVALID_FIREBASE_ID_TOKEN);
             }
         } catch (Exception exception) {
-            throw new IritubeException(IritubeFirebaseError.INVALID_FIREBASE_ID_TOKEN);
+            throw new IritubeException(IritubeFirebaseError.INVALID_FIREBASE_ID_TOKEN, exception);
         }
 
         return Optional.of(firebaseToken);

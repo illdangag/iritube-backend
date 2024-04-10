@@ -69,7 +69,7 @@ public class S3StorageServiceImpl implements StorageService {
         try {
             size = inputStream.available();
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_VIDEO_FILE);
+            throw new IritubeException(IritubeCoreError.INVALID_VIDEO_FILE, exception);
         }
 
         FileMetadata fileMetadata = FileMetadata.builder()
@@ -112,7 +112,7 @@ public class S3StorageServiceImpl implements StorageService {
         try {
             size = inputStream.available();
         } catch (Exception exception) {
-            throw new IritubeException(IritubeCoreError.INVALID_VIDEO_THUMBNAIL);
+            throw new IritubeException(IritubeCoreError.INVALID_VIDEO_THUMBNAIL, exception);
         }
 
         FileMetadata fileMetadata = FileMetadata.builder()
