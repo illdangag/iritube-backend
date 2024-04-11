@@ -147,8 +147,16 @@ public class PlayListServiceImpl implements PlayListService {
                     PlayListInfo playListInfo = new PlayListInfo(playList);
                     playListInfo.getVideoInfoList()
                             .stream()
-                            .filter(videoInfo -> videoInfo.getDeleted() || videoInfo.getShare() == VideoShare.PRIVATE
-                                    && !videoInfo.getAccountInfo().getAccountKey().equals(account.getAccountKey()))
+                            .filter(videoInfo -> {
+                                if (videoInfo.getDeleted()) {
+                                    return true;
+                                }
+
+                                String videoAccountAccountKey = videoInfo.getAccountInfo().getAccountKey();
+                                String requestAccountKey = account == null ? "" : account.getAccountKey();
+
+                                return videoInfo.getShare() == VideoShare.PRIVATE && !videoAccountAccountKey.equals(requestAccountKey);
+                            })
                             .forEach(VideoInfo::setMasking);
                     return playListInfo;
                 })
