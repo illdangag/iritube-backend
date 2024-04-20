@@ -19,8 +19,7 @@ public enum IritubeCoreError implements IritubeError {
 
     // 동영상 오류
     INVALID_VIDEO_FILE("03000000", 400, "Invalid video file."),
-    INVALID_VIDEO_THUMBNAIL("03000002", 400, "Invalid video thumbnail."),
-    ;
+    INVALID_VIDEO_THUMBNAIL("03000002", 400, "Invalid video thumbnail.");
 
     private final String code;
     private final int httpStatusCode;

@@ -1,5 +1,6 @@
 package com.illdangag.iritube.core.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.illdangag.iritube.core.data.entity.type.VideoShare;
 import com.illdangag.iritube.core.data.entity.type.VideoState;
 import jakarta.persistence.*;
@@ -82,6 +83,18 @@ public class Video {
 
     private static String createVideoKey() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    }
+
+    /**
+     * 동영상에 대한 권한 확인
+     */
+    @JsonIgnore
+    public boolean isAuthorization(Account account) {
+        if (this.share == VideoShare.PRIVATE) {
+            return this.account.equals(account);
+        } else {
+            return true;
+        }
     }
 
     @Override

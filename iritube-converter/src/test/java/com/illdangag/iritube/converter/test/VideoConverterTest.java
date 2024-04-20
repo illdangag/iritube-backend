@@ -1,4 +1,4 @@
-package com.illdangag.iritube.converter;
+package com.illdangag.iritube.converter.test;
 
 import com.illdangag.iritube.converter.convert.VideoConverter;
 import lombok.extern.slf4j.Slf4j;
