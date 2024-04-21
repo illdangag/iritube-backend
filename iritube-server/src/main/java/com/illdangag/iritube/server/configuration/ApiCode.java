@@ -28,4 +28,6 @@ public enum ApiCode {
     VT_001,
 
     VC_001,
+    VC_002,
+    VC_003,
 }

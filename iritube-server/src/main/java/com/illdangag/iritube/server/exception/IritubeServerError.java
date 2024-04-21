@@ -41,7 +41,10 @@ public enum IritubeServerError implements IritubeError {
     // 재생 목록 오류
     NOT_EXIST_PLAYLIST("05000000", 404, "Not exist play list."),
     DUPLICATE_VIDEO_IN_PLAYLIST("05000001", 400, "Duplicate video in play list."),
-    PRIVATE_PLAYLIST("05000002", 400, "Private playlist.");
+    PRIVATE_PLAYLIST("05000002", 400, "Private playlist."),
+
+    // 동영상 댓글 오류
+    NOT_EXIST_VIDEO_COMMENT("06000000", 404, "Not exist video comment.");
 
     private final String code;
     private final int httpStatusCode;
