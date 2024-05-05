@@ -22,11 +22,12 @@ public class VideoCommentInfo {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long updateDate;
 
-    @JsonProperty("account")
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean deleted;
+
+    @JsonProperty("account")
     private AccountInfo accountInfo;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String comment;
 
     @JsonProperty("comments")
@@ -36,10 +37,18 @@ public class VideoCommentInfo {
     public VideoCommentInfo(VideoComment videoComment) {
         this.id = String.valueOf(videoComment.getId());
         this.videoCommentKey = videoComment.getCommentKey();
+
         this.createDate = DateTimeUtils.getLong(videoComment.getCreateDate());
         this.updateDate = DateTimeUtils.getLong(videoComment.getUpdateDate());
-        this.accountInfo = new AccountInfo(videoComment.getAccount());
-        this.comment = videoComment.getComment();
+        this.deleted = videoComment.getDeleted();
         this.videoCommentInfoList = null; // TODO 대댓글 기능 추가
+
+        if (videoComment.getDeleted()) { // 삭제한 동영상 댓글
+            this.accountInfo = null;
+            this.comment = null;
+        } else {
+            this.accountInfo = new AccountInfo(videoComment.getAccount());
+            this.comment = videoComment.getComment();
+        }
     }
 }

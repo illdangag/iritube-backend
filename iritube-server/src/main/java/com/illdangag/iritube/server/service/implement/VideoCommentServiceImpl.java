@@ -101,4 +101,29 @@ public class VideoCommentServiceImpl implements VideoCommentService {
                 .limit(limit)
                 .build();
     }
+
+    @Override
+    public VideoCommentInfo deleteVideoComment(Account account, String videoKey, String videoCommentKey) {
+        Optional<Video> videoOptional = this.videoRepository.getVideo(videoKey);
+        Video video = videoOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_VIDEO));
+        return this.deleteVideoComment(account, video, videoCommentKey);
+    }
+
+    @Override
+    public VideoCommentInfo deleteVideoComment(Account account, Video video, String videoCommentKey) {
+        if (!video.isAuthorization(account)) {
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO);
+        }
+
+        Optional<VideoComment> videoCommentOptional = this.videoCommentRepository.getVideoComment(videoCommentKey);
+        VideoComment videoComment = videoCommentOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_VIDEO_COMMENT));
+        if (videoComment.getDeleted()) {
+            throw new IritubeException(IritubeServerError.NOT_EXIST_VIDEO_COMMENT);
+        }
+
+        videoComment.setDeleted(true);
+        this.videoCommentRepository.save(videoComment);
+
+        return new VideoCommentInfo(videoComment);
+    }
 }

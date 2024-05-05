@@ -30,4 +30,5 @@ public enum ApiCode {
     VC_001,
     VC_002,
     VC_003,
+    VC_004,
 }

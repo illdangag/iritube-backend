@@ -26,4 +26,11 @@ public interface VideoCommentService {
     VideoCommentInfoList getVideoCommentList(Account account, String videoKey, VideoCommentInfoSearch videoCommentInfoSearch);
 
     VideoCommentInfoList getVideoCommentList(Account account, Video video, VideoCommentInfoSearch videoCommentInfoSearch);
+
+    /**
+     * 동영상 댓글 삭제
+     */
+    VideoCommentInfo deleteVideoComment(Account account, String videoKey, String videoCommentKey);
+
+    VideoCommentInfo deleteVideoComment(Account account, Video video, String videoCommentKey);
 }

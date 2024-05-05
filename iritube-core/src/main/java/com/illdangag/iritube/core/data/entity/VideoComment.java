@@ -64,6 +64,10 @@ public class VideoComment {
     @NotNull
     private String comment = "";
 
+    @Builder.Default
+    @NotNull
+    private Boolean deleted = false;
+
     private static String createCommentKey() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     }

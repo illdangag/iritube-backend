@@ -222,9 +222,7 @@ public class PlayListServiceImpl implements PlayListService {
                         String videoKey = playListVideo.getVideo().getVideoKey();
                         return !playListInfoUpdate.getVideoKeyList().contains(videoKey);
                     })
-                    .forEach(playListVideo -> {
-                        this.videoRepository.remove(playListVideo);
-                    });
+                    .forEach(this.videoRepository::remove);
 
             for (PlayListVideo playListVideo : playListVideoList) {
                 this.videoRepository.save(playListVideo);
@@ -244,9 +242,7 @@ public class PlayListServiceImpl implements PlayListService {
     public PlayListInfo deletePlayListInfo(Account account, String playListKey) {
         Optional<PlayList> playListOptional = this.videoRepository.getPlayList(account, playListKey);
 
-        PlayList playList = playListOptional.orElseThrow(() -> {
-            return new IritubeException(IritubeServerError.NOT_EXIST_PLAYLIST);
-        });
+        PlayList playList = playListOptional.orElseThrow(() -> new IritubeException(IritubeServerError.NOT_EXIST_PLAYLIST));
 
         PlayListInfo playListInfo = new PlayListInfo(playList);
 

@@ -89,4 +89,16 @@ public class VideoCommentController {
         return ResponseEntity.ok(videoCommentInfoList);
     }
 
+    /**
+     * 동영상 댓글 삭제
+     */
+    @ApiCallLog(apiCode = ApiCode.VC_004)
+    @IritubeAuthorization(type = { IritubeAuthorizationType.ACCOUNT, })
+    @RequestMapping(method = RequestMethod.DELETE, path = "/videos/{videoKey}/comments/{commentKey}")
+    public ResponseEntity<VideoCommentInfo> deleteVideoComment(@PathVariable("videoKey") String videoKey,
+                                                               @PathVariable("commentKey") String videoCommentKey,
+                                                               @RequestContext Account account) {
+        VideoCommentInfo videoCommentInfo = this.videoCommentService.deleteVideoComment(account, videoKey, videoCommentKey);
+        return ResponseEntity.ok(videoCommentInfo);
+    }
 }
