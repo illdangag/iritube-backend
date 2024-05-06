@@ -37,7 +37,9 @@ public class VideoCommentRepositoryImpl implements VideoCommentRepository {
 
     @Override
     public List<VideoComment> getVideoCommentList(Video video, int offset, int limit) {
-        final String jpql = "SELECT vc FROM VideoComment vc WHERE vc.video = :video";
+        final String jpql = "SELECT vc FROM VideoComment vc " +
+                "WHERE vc.video = :video " +
+                "ORDER BY vc.createDate ASC";
 
         TypedQuery<VideoComment> query = this.entityManager.createQuery(jpql, VideoComment.class)
                 .setParameter("video", video)
