@@ -10,24 +10,24 @@ import java.io.InputStream;
 
 @Slf4j
 public class VideoConverterTest {
-    private final String FFMPEG_PATH = "";
-    private final String FFPROBE_PATH = "";
+    private final String FFMPEG_PATH = "/Users/ybchoi/Desktop/dev/ffmpeg/ffmpeg";
+    private final String FFPROBE_PATH = "/Users/ybchoi/Desktop/dev/ffmpeg/ffprobe";
 
-    private final String VIDEO_PATH = "";
-    private final String OUTPUT_PATH = "";
+    private final String VIDEO_PATH = "/Users/ybchoi/Desktop/temp/sample.mp4";
+    private final String OUTPUT_PATH = "/Users/ybchoi/Desktop/temp/output";
 
     @Test
-    void hls00() throws Exception {
+    public void hls00() throws Exception {
         File videoFile = new File(VIDEO_PATH);
         FileInputStream fileInputStream = new FileInputStream(videoFile);
         VideoConverter videoConverter = new VideoConverter(FFMPEG_PATH, FFPROBE_PATH, OUTPUT_PATH, fileInputStream);
         File hlsDirectory = videoConverter.createHls();
         log.info("hls: {}", hlsDirectory.getAbsolutePath());
-        videoConverter.clear();
+//        videoConverter.clear();
     }
 
     @Test
-    void thumbnail00() throws Exception {
+    public void thumbnail00() throws Exception {
         File videoFile = new File(VIDEO_PATH);
         FileInputStream fileInputStream = new FileInputStream(videoFile);
         VideoConverter videoConverter = new VideoConverter(FFMPEG_PATH, FFPROBE_PATH, OUTPUT_PATH, fileInputStream);
